@@ -7,3 +7,17 @@
   .bundle
 {%- endif -%}
 ';
+
+/* Custom Dark Mode Overrides */
+html[data-mode="dark"] {
+  --main-bg: #000000;         /* Background color */
+  --sidebar-bg: #0d1117;      /* Sidebar background */
+  --topbar-bg: #0d1117;       /* Header background */
+  --card-bg: #161b22;         /* Card / Post container background */
+}
+
+/* Custom Light Mode Overrides (Optional) */
+html[data-mode="light"] {
+  --main-bg: #ffffff;
+  --sidebar-bg: #f6f8fa;
+}
