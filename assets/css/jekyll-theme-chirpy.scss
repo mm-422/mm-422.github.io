@@ -2,7 +2,11 @@
 # Front Matter
 ---
 
-@use 'main';
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
 /* Custom introduction style */
 .prompt-introduction {
   position: relative;
