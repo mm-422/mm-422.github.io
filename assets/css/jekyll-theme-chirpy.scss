@@ -2,7 +2,21 @@
 # Only the main Sass file needs front matter
 ---
 
-@use 'main';
+@use 'main
+{%- if jekyll.environment == ' production ' -%}
+  .bundle
+{%- endif -%}
+';
+/* append your custom style below */
+/* Custom introduction style */
+.prompt-introduction {
+  position: relative;
+  background-color: #e6f7ff; /* Light blue background */
+  border-left: 4px solid #1890ff; /* Blue left border */
+  padding: 15px 15px 15px 40px; /* Left padding for icon */
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
 
 /* Custom Dark Mode Overrides */
 html[data-mode="dark"] {
