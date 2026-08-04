@@ -1,0 +1,18 @@
+---
+# Only the main Sass file needs front matter
+---
+
+@import 'main';
+
+/* Custom Light Mode Overrides */
+html[data-mode="light"] {
+  --main-bg: #ffffff;
+  --sidebar-bg: #f6f8fa;
+}
+
+/* Custom Dark Mode Overrides */
+html[data-mode="dark"] {
+  --main-bg: #0d1117;
+  --sidebar-bg: #000000;
+  --topbar-bg: #161b22;
+}
