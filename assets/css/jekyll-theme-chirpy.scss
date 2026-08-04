@@ -2,12 +2,14 @@
 # Only the main Sass file needs front matter
 ---
 
-@use 'main
-{%- if jekyll.environment == 'development' -%}
-  .bundle
-{%- endif -%}
-';
+@use 'main';
 /* append your custom style below */
+/* Custom siderbar title*/
+.site-title {
+  color: #ff5733; 
+  font-weight: bold;
+}
+
 /* Custom introduction style */
 .prompt-introduction {
   position: relative;
