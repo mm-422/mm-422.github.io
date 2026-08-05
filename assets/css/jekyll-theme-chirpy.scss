@@ -47,3 +47,9 @@ html[data-mode="light"] {
   --main-bg: #ffffff;
   --sidebar-bg: #f6f8fa;
 }
+
+/* 4. Customize Sidebar Title Text */
+#sidebar h1 {
+  font-family: 'Arial', sans-serif !important; /* Example font change */
+  color: #ff0000 !important; /* Example color change to red */
+}
