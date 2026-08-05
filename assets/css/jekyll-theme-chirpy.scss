@@ -13,6 +13,17 @@
 ';
 
 /* append your custom style below */
+
+/* For the main content body background */
+body {
+  background-color: #f0f2f5 !important;
+}
+
+/* For the side menu navigation background */
+#sidebar {
+  background-color: #1a1a1a !important;
+}
+
 /* Custom introduction style */
 .prompt-introduction {
   position: relative;
