@@ -3,7 +3,7 @@ title: "PCMan Buffer Overflow"
 date: 2026-03-03 00:00:00 +/-TTTT
 categories: [hacking, buffer overflow]
 tags: [ftp, buffer overflow, pcman]     # TAG names should always be lowercase
-image: https://github.com/mm-422/mm-422.github.io/blob/mai/assets/images/test.png?raw=true
+image: "/assets/images/test.png"
 ---
 # RCE via Buffer Overflow - PCMan FTP 2.0.0
 ## Executive Summary
