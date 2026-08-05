@@ -49,7 +49,7 @@ html[data-mode="light"] {
 }
 
 /* 4. Customize Sidebar Title Text */
-#site-title d-block {
+#sidebar "site-title d-block" {
   font-family: 'Arial', sans-serif !important; /* Example font change */
   color: #ff0000 !important; /* Example color change to red */
 }
