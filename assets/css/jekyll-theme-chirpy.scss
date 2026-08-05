@@ -22,17 +22,7 @@
   background-color: var(--sidebar-bg) !important;
 }
 
-/* 2. Custom introduction callout box styling */
-.prompt-introduction {
-  position: relative;
-  background-color: #e6f7ff;
-  border-left: 4px solid #1890ff;
-  padding: 15px 15px 15px 40px;
-  margin-bottom: 20px;
-  border-radius: 4px;
-}
-
-/* 3. Dark Mode CSS Variable Overrides (Manual toggle & System preference) */
+/* 2. Dark Mode CSS Variable Overrides (Manual toggle & System preference) */
 html[data-mode="dark"],
 html:not([data-mode]):not([data-mode="light"]) {
   @media (prefers-color-scheme: dark) {
@@ -52,7 +42,7 @@ html[data-mode="dark"] {
   --tb-border-color: #21262d !important;
 }
 
-/* 4. Light Mode CSS Variable Overrides (Optional) */
+/* 3. Light Mode CSS Variable Overrides (Optional) */
 html[data-mode="light"] {
   --main-bg: #ffffff;
   --sidebar-bg: #f6f8fa;
