@@ -13,36 +13,46 @@
 ';
 
 /* append your custom style below */
-
-/* For the main content body background */
-body {
-  background-color: #f0f2f5 !important;
+/* 1. Direct Target Overrides (Overrides Chirpy container layers) */
+#main-wrapper {
+  background-color: var(--main-bg) !important;
 }
 
-/* For the side menu navigation background */
 #sidebar {
-  background-color: #1a1a1a !important;
+  background-color: var(--sidebar-bg) !important;
 }
 
-/* Custom introduction style */
+/* 2. Custom introduction callout box styling */
 .prompt-introduction {
   position: relative;
-  background-color: #e6f7ff; /* Light blue background */
-  border-left: 4px solid #1890ff; /* Blue left border */
-  padding: 15px 15px 15px 40px; /* Left padding for icon */
+  background-color: #e6f7ff;
+  border-left: 4px solid #1890ff;
+  padding: 15px 15px 15px 40px;
   margin-bottom: 20px;
   border-radius: 4px;
 }
 
-/* Custom Dark Mode Overrides */
-html[data-mode="dark"] {
-  --main-bg: #000000;         /* Background color */
-  --sidebar-bg: #0d1117;      /* Sidebar background */
-  --topbar-bg: #0d1117;       /* Header background */
-  --card-bg: #161b22;         /* Card / Post container background */
+/* 3. Dark Mode CSS Variable Overrides (Manual toggle & System preference) */
+html[data-mode="dark"],
+html:not([data-mode]):not([data-mode="light"]) {
+  @media (prefers-color-scheme: dark) {
+    --main-bg: #000000 !important;         /* Pure black main background */
+    --sidebar-bg: #0d1117 !important;      /* Dark sidebar background */
+    --topbar-bg: #0d1117 !important;       /* Header background */
+    --card-bg: #161b22 !important;         /* Post/Card containers */
+    --tb-border-color: #21262d !important;
+  }
 }
 
-/* Custom Light Mode Overrides (Optional) */
+html[data-mode="dark"] {
+  --main-bg: #000000 !important;
+  --sidebar-bg: #0d1117 !important;
+  --topbar-bg: #0d1117 !important;
+  --card-bg: #161b22 !important;
+  --tb-border-color: #21262d !important;
+}
+
+/* 4. Light Mode CSS Variable Overrides (Optional) */
 html[data-mode="light"] {
   --main-bg: #ffffff;
   --sidebar-bg: #f6f8fa;
