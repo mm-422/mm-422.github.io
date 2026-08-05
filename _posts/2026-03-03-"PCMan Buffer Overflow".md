@@ -1,11 +1,9 @@
 ---
 title: "PCMan Buffer Overflow"
 date: 2026-03-03 00:00:00 +/-TTTT
-categories: [Hacking, buffer-overflow]
-tags: [ftp, buffer-overflow, pcman]     # TAG names should always be lowercase
+categories: [hacking, buffer overflow]
+tags: [ftp, buffer overflow, pcman]     # TAG names should always be lowercase
 ---
-This is a test.
-
 # RCE via Buffer Overflow - PCMan FTP 2.0.0
 ## Executive Summary
 This project details a Stack-based Buffer Overflow vulnerability in a legacy version of the free FTP server software, PCMan, also known as PCManFTPD2.
