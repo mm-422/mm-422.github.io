@@ -1,14 +1,18 @@
 ---
 ---
 
-@use 'main';
-/* append your custom style below */
-/* Custom siderbar title*/
-.site-title {
-  color: #ff5733; 
-  font-weight: bold;
-}
+@use 'abstracts/variables' with (
+  $theme: '{{ site.theme_mode }}'
+);
 
+/* prettier-ignore */
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* append your custom style below */
 /* Custom introduction style */
 .prompt-introduction {
   position: relative;
