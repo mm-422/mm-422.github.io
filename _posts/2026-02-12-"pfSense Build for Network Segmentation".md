@@ -5,7 +5,7 @@ categories: [research, networking]
 tags: [pfsense, hardware, router]     # TAG names should always be lowercase
 image: "/assets/images/pfsense.png"
 ---
-## 1️⃣ Network Segmentation for SoHo
+## 1. Network Segmentation for SoHo
 > A write-up on what Network Segmentation means under the context of small office / home office, why it is important, and how it can be implemented.
 
 ### Definition
