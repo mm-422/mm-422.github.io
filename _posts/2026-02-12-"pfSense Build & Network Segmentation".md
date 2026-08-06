@@ -1,11 +1,11 @@
 ---
-title: "pfSense Build for Network Segmentation"
+title: "pfSense Build & Network Segmentation"
 date: 2026-02-12 00:00:00 +/-TTTT
 categories: [research, networking]
 tags: [pfsense, hardware, router]     # TAG names should always be lowercase
-image: "/assets/images/pfsense.png"
+image: "/assets/images/pfsense_rev.png"
 ---
-## 1. Network Segmentation for SoHo
+## P1 Network Segmentation for SoHo
 > A write-up on what Network Segmentation means under the context of small office / home office, why it is important, and how it can be implemented.
 
 ### Definition
@@ -68,7 +68,7 @@ These are some of the pros of going with a DIY approach:
 
 Building your own router and pairing it with a robust software solution like OPNSense or pfSense for network segmentation is very much achieveable and not as difficult as it may sound. It just requires some research ― which this guide aims to simplify ― alongside decent understanding of networking concepts and how to configure network equipment.  
 
-## 2️⃣ Custom Router for pfSense
+## P2 Custom Router for pfSense
 ### Overview
 This guide will walk you through the process of building a simple computer for the purposes of running ``pfSense`` which is a widely trusted open-source firewall/router software.
 
@@ -155,7 +155,7 @@ You can also indirectly improve QoS for specific services like VoIP by segregati
 Likewise, you should group highly sensitive devices like systems used for work or finance in their own VLANs with restrictive security settings.  
 
 
-## 3️⃣ Additional Details
+## P3 Additional Details
 ### Network Interface Card
 When choosing a network card for your build, it is often said that spending the extra and going for a genuine Intel-branded NIC can save you a lot of trouble in the process. This is true. However, an Intel NIC such as the X540-T2 may not make total sense depending on your budget and needs. Not to mention navigating a market of counterfeit NICs may not be the experience you're looking for.
 
