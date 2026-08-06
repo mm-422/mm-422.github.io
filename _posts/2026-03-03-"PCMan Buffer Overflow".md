@@ -1,11 +1,10 @@
 ---
-title: "PCMan Buffer Overflow"
+title: "PCMan FTP 2.0.0 Buffer Overflow"
 date: 2026-03-03 00:00:00 +/-TTTT
-categories: [hacking, buffer overflow]
+categories: [research, buffer overflow]
 tags: [ftp, buffer overflow, pcman]     # TAG names should always be lowercase
 image: "/assets/images/pcman.png"
 ---
-# RCE via Buffer Overflow - PCMan FTP 2.0.0
 ## Executive Summary
 This project details a Stack-based Buffer Overflow vulnerability in a legacy version of the free FTP server software, PCMan, also known as PCManFTPD2.
 
@@ -150,16 +149,21 @@ This project is strictly for educational purposes only. No malicious binaries ar
 
 ## Appendix
 **Azoware Installer for PCMan FTP**
+A screenshot of the installer with some disclaimers. Note that there is no option for localization during install. Only Traditional Chinese is available. Both the installer and PCMan application may require some translation for ease of navigation.
 <img width="1280" height="720" alt="azoware installer" src="https://github.com/user-attachments/assets/03776b3e-705e-4493-89f8-8b94055273b6" />
 
 **PCMan Root Directory**
+The root directory of a standard PCMan FTPD install. Source files for the blowfish encryption tech and a guide (Traditional Chinese) are included. 
 <img width="1280" height="720" alt="root directory" src="https://github.com/user-attachments/assets/25cfc044-8ce6-4ddb-abda-880277b19b1f" />
 
 **Basic FTP Setup**
+Connecting to a PCMan FTPD server with FileZilla using default credentials for demo purposes.
 <img width="1747" height="989" alt="basic ftp setup" src="https://github.com/user-attachments/assets/f708a491-2f24-4bef-9aa8-3d0ba27dd04a" />
 
-**WinDbg Recorded Crash**
+**WinDbg Recorded Error**
+A screenshot of the stack and error message shown in WinDbg once the exploit for PCMan is executed. Note the return addresses that display parts of the payload (NOP sleds and shell code) we crafted earlier.
 <img width="1582" height="933" alt="windbg crash moment" src="https://github.com/user-attachments/assets/1cab8810-009b-467f-b0a9-7ab5f1343fc7" />
 
 **Wireshark Capture**
+The PCMan FTPD server was specifically hosted on port 2100 to make filtering via Wireshark simpler. Here you can see the large length value and plaintext packet contents that should alert an SOC analyst or EDR immediately.
 <img width="1095" height="765" alt="wireshark capture" src="https://github.com/user-attachments/assets/cbc6073d-77f6-4aea-b8d9-05d773f5c9bc" />
