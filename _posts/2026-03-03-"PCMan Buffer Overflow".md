@@ -149,17 +149,17 @@ except Exception as e:
 This project is strictly for educational purposes only. No malicious binaries are provided.
 
 ## Appendix
-### Azoware Installer for PCMan FTP
+**Azoware Installer for PCMan FTP**
 <img width="1280" height="720" alt="azoware installer" src="https://github.com/user-attachments/assets/03776b3e-705e-4493-89f8-8b94055273b6" />
 
-### PCMan Root Directory
+**PCMan Root Directory**
 <img width="1280" height="720" alt="root directory" src="https://github.com/user-attachments/assets/25cfc044-8ce6-4ddb-abda-880277b19b1f" />
 
-### Basic FTP Setup
+**Basic FTP Setup**
 <img width="1747" height="989" alt="basic ftp setup" src="https://github.com/user-attachments/assets/f708a491-2f24-4bef-9aa8-3d0ba27dd04a" />
 
-### WinDbg Recorded Crash
+**WinDbg Recorded Crash**
 <img width="1582" height="933" alt="windbg crash moment" src="https://github.com/user-attachments/assets/1cab8810-009b-467f-b0a9-7ab5f1343fc7" />
 
-### Wireshark Capture
+**Wireshark Capture**
 <img width="1095" height="765" alt="wireshark capture" src="https://github.com/user-attachments/assets/cbc6073d-77f6-4aea-b8d9-05d773f5c9bc" />
