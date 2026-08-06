@@ -5,7 +5,7 @@ categories: [research, networking]
 tags: [pfsense, hardware, router]     # TAG names should always be lowercase
 image: "/assets/images/pfsense_rev.png"
 ---
-## P1 Network Segmentation for SoHo
+## 1. Network Segmentation for SoHo
 > A write-up on what Network Segmentation means under the context of small office / home office, why it is important, and how it can be implemented.
 
 ### Definition
@@ -68,7 +68,7 @@ These are some of the pros of going with a DIY approach:
 
 Building your own router and pairing it with a robust software solution like OPNSense or pfSense for network segmentation is very much achieveable and not as difficult as it may sound. It just requires some research ― which this guide aims to simplify ― alongside decent understanding of networking concepts and how to configure network equipment.  
 
-## P2 Custom Router for pfSense
+## 2. Custom Router for pfSense
 ### Overview
 This guide will walk you through the process of building a simple computer for the purposes of running ``pfSense`` which is a widely trusted open-source firewall/router software.
 
@@ -128,8 +128,8 @@ If you've ever had to install an operating system, installing pfSense is more or
 - Configure your network settings, firewall rules, and other desired settings.
 <br><br>
 
-## pfSense VLAN Configuration
-## Overview
+## 3. pfSense VLAN Configuration
+### Overview
 The following will be a simplified explanation of what VLANs are and how they can be utilized to implement Network Segmentation through pfSense. If you are looking for how to configure VLANs on a pfSense device, there is already excellent documentation available on the netgate website.<br>
 LINK: https://docs.netgate.com/pfsense/en/latest/vlan/configuration.html
 
@@ -155,7 +155,7 @@ You can also indirectly improve QoS for specific services like VoIP by segregati
 Likewise, you should group highly sensitive devices like systems used for work or finance in their own VLANs with restrictive security settings.  
 
 
-## P3 Additional Details
+## 4. Additional Details
 ### Network Interface Card
 When choosing a network card for your build, it is often said that spending the extra and going for a genuine Intel-branded NIC can save you a lot of trouble in the process. This is true. However, an Intel NIC such as the X540-T2 may not make total sense depending on your budget and needs. Not to mention navigating a market of counterfeit NICs may not be the experience you're looking for.
 
