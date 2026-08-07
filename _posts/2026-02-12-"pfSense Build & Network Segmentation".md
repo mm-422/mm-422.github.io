@@ -5,8 +5,16 @@ categories: [research, networking]
 tags: [pfsense, hardware, router]     # TAG names should always be lowercase
 image: "/assets/images/pfsense_rev.png"
 ---
-## Preface
-This project explores what Network Segmentation means under the context of small/home office, why it is important, and how it could be implemented via a custom pfSense router.
+## Executive Summary
+This project explores what Network Segmentation means under the context of small/home office. It makes the argument for why segmentation can be important even in SoHo settings, especially with modern use cases and scenarios. This is then followed up with a custom router build showcasing off-the-shelf parts that should be accessible to most people. We then cover the installation and configuration of an enterprise-tier networking and firewall software called pfSense.
+
+```
+• PROJECT CONTENTS •
+[1] Network Segmentation
+[2] pfSense Router Build
+[3] VLAN Configuration
+[4] Additional Details
+```
 
 ## Network Segmentation
 ### ♦️ Definition & Importance
@@ -59,7 +67,7 @@ These are some of the pros of going with a DIY approach:
 
 Building your own router and pairing it with a robust software solution like OPNSense or pfSense for network segmentation is very much achieveable and not as difficult as it may sound. It just requires some research ― which this guide aims to simplify ― alongside decent understanding of networking concepts and how to configure network equipment.  
 
-## Custom Router Build
+## pfSense Router Build
 ### ♦️ Hardware
 Since we will be building a machine from scratch, this list of parts might look very similar to a typical DIY computer build used for gaming or rendering. A router is basically a small computer after all and building our own brings with it plenty of benefits such as relatively infinite levels of serviceability, potentially better performance and even security.
 
@@ -115,7 +123,7 @@ If you've ever had to install an operating system, installing pfSense is more or
 - Configure your network settings, firewall rules, and other desired settings.
 <br><br>
 
-## VLANs via pfSense
+## VLAN Configuration
 ### ♦️ VLANs
 The following will be a simplified explanation of what VLANs are and how they can be utilized to implement Network Segmentation through pfSense. If you are looking for how to configure VLANs on a pfSense device, there is already excellent documentation available on the netgate website.<br>
 LINK: https://docs.netgate.com/pfsense/en/latest/vlan/configuration.html
