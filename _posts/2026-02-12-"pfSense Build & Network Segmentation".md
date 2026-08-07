@@ -5,26 +5,19 @@ categories: [research, networking]
 tags: [pfsense, hardware, router]     # TAG names should always be lowercase
 image: "/assets/images/pfsense_rev.png"
 ---
-## PREFACE
+## Preface
 This project explores what Network Segmentation means under the context of small/home office, why it is important, and how it could be implemented via a custom pfSense router.
 
-## PART 1: NETWORK SEGMENTATION FOR SOHO
-### Definition
-> What is Network Segmentation?
-
+## Network Segmentation
+### ♦️ Definition & Importance
 Network Segmentation is a term often used in the cybersecurity and networking world to describe the practice of dividing computer networks into smaller, isolated segments (often called subnets) to allow for better control over network traffic, performance, and security.  
 Often times, network segmentation is used for isolating high-value or security-sensitive devices from other common devices. An example of this in a home-office type setting may be a work computer that is used for conducting banking activites being put on a network that is separate from one serving the mobile devices of visiting guests.
-
-### Importance 
-> Why Network Segmentation Matters - even for home users!
 
 In today's high-speed digital landscape, our devices help facilitate activities such as online banking and e-commerce. These activities often include the exchange of critical personal and financial information. These bits of information are still very much targeted by malicious entities and recent developments in the world of security have shown that safety is not guaranteed even in your own home network utilizing equipment you've bought and paid for.
 
 Just like how we would usually carry out high-value transactions at a secure location in person, we should secure our home networks especially in the case of work-at-home type settings as they are becoming more and more ubiquitous. While network segmentation alone is not the be all end all to good home network security, the good news is that implementing a relatively simple yet highly effective measure such as network segmentation in a home or small office environment does not need to be complicated.
 
-### Implementation Methods
-> Examples of how Network Segmentation can be achieved.
-
+### ♦️ Implementation Methods
 ``Physical Segmentation``
 - Involves creating separate networks by utilizing dedicated hardware such as switches and routers.
 - Example: Work computer is connected to a dedicated LAN port on a smart switch instead of the home WiFi which shares its connection with many other devices.
@@ -39,9 +32,7 @@ Just like how we would usually carry out high-value transactions at a secure loc
 - Operates at Layer 2 (Data Link).
 - Assigns a unique tag to each packet/frame to create logical groupings.
 
-### Challenges
-> Limitations with regular home devices.
-
+### ♦️ Limitations
 Typical networking equipment like routers supplied by ISPs are usually woefully inadequate for the purposes of safeguarding against modern day threats. The operating system is often stripped down to only enable simple functionality and maintenance. This could be done for a multitude of reasons like upselling customers to a more expensive subscription. Besides, the ISPs don't really want you to go messing about with the router settings in the first place anyway.
 
 There are plenty of commercial solutions out there that can help you to achieve Network Segmentation quick and easy but they may also be costly and come with their own set of caveats. The ASUS router software exploits of recent times come to mind.
@@ -68,7 +59,7 @@ These are some of the pros of going with a DIY approach:
 
 Building your own router and pairing it with a robust software solution like OPNSense or pfSense for network segmentation is very much achieveable and not as difficult as it may sound. It just requires some research ― which this guide aims to simplify ― alongside decent understanding of networking concepts and how to configure network equipment.  
 
-## PART 2: CUSTOM ROUTER FOR PFSENSE
+## Custom Router Build
 ### Overview
 This guide will walk you through the process of building a simple computer for the purposes of running ``pfSense`` which is a widely trusted open-source firewall/router software.
 
