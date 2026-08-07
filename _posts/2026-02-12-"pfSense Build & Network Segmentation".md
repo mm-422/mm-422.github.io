@@ -41,7 +41,7 @@ So, aside from upgrading your home router to a more premium, feature-full device
 
 A DIY router does not need to consist of premium and/or specialized parts. In fact, spare parts from an old build or laptop can be repurposed in order to minimize cost.
 
-### The DIY Approach
+### ♦️ The DIY Approach
 > Benefits of building your own router to allow for effective segmentation.
 
 These are some of the pros of going with a DIY approach:
@@ -115,7 +115,7 @@ If you've ever had to install an operating system, installing pfSense is more or
 - Configure your network settings, firewall rules, and other desired settings.
 <br><br>
 
-## PART 3: VLAN CONFIG VIA PFSENSE
+## VLANs via pfSense
 ### Overview
 The following will be a simplified explanation of what VLANs are and how they can be utilized to implement Network Segmentation through pfSense. If you are looking for how to configure VLANs on a pfSense device, there is already excellent documentation available on the netgate website.<br>
 LINK: https://docs.netgate.com/pfsense/en/latest/vlan/configuration.html
@@ -142,7 +142,7 @@ You can also indirectly improve QoS for specific services like VoIP by segregati
 Likewise, you should group highly sensitive devices like systems used for work or finance in their own VLANs with restrictive security settings.  
 
 
-## PART 4: ADDITIONAL DETAILS
+## Additional Details
 ### Network Interface Card
 When choosing a network card for your build, it is often said that spending the extra and going for a genuine Intel-branded NIC can save you a lot of trouble in the process. This is true. However, an Intel NIC such as the X540-T2 may not make total sense depending on your budget and needs. Not to mention navigating a market of counterfeit NICs may not be the experience you're looking for.
 
