@@ -116,11 +116,10 @@ If you've ever had to install an operating system, installing pfSense is more or
 <br><br>
 
 ## VLANs via pfSense
-### Overview
+### ♦️ VLANs
 The following will be a simplified explanation of what VLANs are and how they can be utilized to implement Network Segmentation through pfSense. If you are looking for how to configure VLANs on a pfSense device, there is already excellent documentation available on the netgate website.<br>
 LINK: https://docs.netgate.com/pfsense/en/latest/vlan/configuration.html
 
-### ♦️ VLANs
 A Virtual Local Area Network or VLAN is a software approach to segmenting a network. It essentially divides a network into multiple domains by assigning and identifying a unique tag on data packets, more specifically Ethernet frames, passing through the Data Link Layer.
 
 ### ♦️ Network Segmentation via VLANs
@@ -143,13 +142,13 @@ Likewise, you should group highly sensitive devices like systems used for work o
 
 
 ## Additional Details
-### Network Interface Card
+### ♦️ Network Interface Card
 When choosing a network card for your build, it is often said that spending the extra and going for a genuine Intel-branded NIC can save you a lot of trouble in the process. This is true. However, an Intel NIC such as the X540-T2 may not make total sense depending on your budget and needs. Not to mention navigating a market of counterfeit NICs may not be the experience you're looking for.
 
 This is not to say that other brands or manufacturers of NICs simply make devices that won't work with pfSense or FreeBSD which is the underlying operating system. Quite the contrary, plenty of NICs out there, even the rather cheap Realtek TG-3468 can work. You may just need to be ready for potential curveballs as was the case with the HP332T used in this guide.
 
 
-### SMBus Issue with Intel H110 Chipset
+### ♦️ SMBus Issue with Intel H110 Chipset
 During the initial boot up phase, the computer would go through the standard POST process, followed by the BIOS screen. It is around here where the computer would appear to encounter problems with displaying the BIOS splashscreen when the HP332T network card was installed. Otherwise, the computer would boot up just fine. After much research, this issue seems to have stemmed from an SMBus issue.
 
 The SMBus or System Management Bus is a two-wire interface protocol used for low-speed communication between various components within a computer system especially those on a motherboard. During the boot up phase, computer components communicate with each other to establish identities and intiate as well as complete "handshake" processes in order to boot into Windows successfully.
@@ -157,11 +156,11 @@ The SMBus or System Management Bus is a two-wire interface protocol used for low
 The Intel H110 Chipset has a specific bug where the boot up process of the motherboard it is part of gets interfered by the boot up process of another device (in this case, the HP332T NIC). This leads to a stall of sorts and the computer is not able to proceed further.
 
 
-### Solution
+### ♦️ Solution
 The solution? We would need to prevent this clash of communication during boot by either making one of the devices recognize the other and apply a compensatory action (which is far too complicated to even attempt as we don't write drivers for any of these devices) or we could simply block them from "seeing" each other. What I mean is, by simply taping up the bins B5 & B6 on the PCIe connector of the HP332T NIC (these are used for communication through SMBus) the computer is now able to go through the booting process with no issues. Interestingly enough, the HP332T doesn't mind not getting a response from the motherboard, but such are the quirks of server-specific hardware.
 
 
-### Resources
+### ♦️ Resources
 **PC not booting with specific PCIe network card**
 : https://www.reddit.com/r/techsupport/comments/x6rujd/pc_not_booting_with_specific_pcie_network_card/
 
