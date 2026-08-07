@@ -60,11 +60,7 @@ These are some of the pros of going with a DIY approach:
 Building your own router and pairing it with a robust software solution like OPNSense or pfSense for network segmentation is very much achieveable and not as difficult as it may sound. It just requires some research ― which this guide aims to simplify ― alongside decent understanding of networking concepts and how to configure network equipment.  
 
 ## Custom Router Build
-### Overview
-This guide will walk you through the process of building a simple computer for the purposes of running ``pfSense`` which is a widely trusted open-source firewall/router software.
-
-### Requirements
-#### ♦️ Hardware
+### ♦️ Hardware
 Since we will be building a machine from scratch, this list of parts might look very similar to a typical DIY computer build used for gaming or rendering. A router is basically a small computer after all and building our own brings with it plenty of benefits such as relatively infinite levels of serviceability, potentially better performance and even security.
 
 It should be stated that there is no need to purchase brand new parts. Used parts such as those that were used in this guide will do just fine ― and I even encourage it as it helps to reduce e-waste. Unless you're building for high availability (well outside the scope of this write up) a simple computer with a good Network Interface Card (NIC) should be plenty.
@@ -80,21 +76,21 @@ All in all, this build cost me a grand total of ~$40. And that's only because I 
 - Network Card : ``HP 332T powered by Broadcom BCM5720``
 <img width="2028" height="1326" alt="Untitled" src="https://github.com/user-attachments/assets/79f9b67e-47d6-4fb5-8bec-12e59ba40b0a" />
 
-#### ♦️ Software
+### ♦️ Software
 There are plenty of ways you can go about building a router. For example, you could run something like pfSense or OPNSense off of a Virtual Machine. You could even go with OpenWRT or Merlin (ASUS's own flavor of OpenWRT). But for this guide, we are going to be looking at a "native" setup of pfSense running on OpenBSD.
 
-#### ♦️ Why pfSense?<br>
+### ♦️ Why pfSense?<br>
 As stated before, pfSense is open-source and is highly regarded in the world of security for its robust features and scalability. It also comes in a "Community Edition" that is free to download and use with no severe limitations, something you might come to expect from software this polished. Personally, I find the interface to be easy to navigate and user-friendly. It has also been absolutely reliable in the many months I've had it running.<br>
 
-#### ♦️ Where do I get pfSense?<br>
+### ♦️ Where do I get pfSense?<br>
 Typically, you would visit the pfSense.org site to download your preferred version (most likely the Community Edition) but the process of downloading seems a bit too intrusive with it requiring a registered account.
 Most people usually use the following mirror link to obtain the exact version of pfSense for their use case eg. ``pfSense-CE-<"version_number">-RELEASE-amd64.iso.gz``<br>
 LINK: https://atxfiles.netgate.com/mirror/downloads/
 
-#### ♦️ How To Install pfSense?<br>
+### ♦️ How To Install pfSense?<br>
 If you've ever had to install an operating system, installing pfSense is more or less a similar experience if a little simpler. For the sake of brevity, this guide will only cover steps up to the point of getting pfSense functional. Configuring it and customizing settings to your home network's needs can be so vast that it could be its own guide.
 
-#### ♦️ Installation Steps
+### ♦️ Installation Steps
 **STEP 1 - Download pfSense Install Image**
 - Go to the link provided above to obtain an appropriate installation image of pfSense for your hardware.
 - Choose the architecture and select a mirror (download link).
@@ -124,10 +120,10 @@ If you've ever had to install an operating system, installing pfSense is more or
 The following will be a simplified explanation of what VLANs are and how they can be utilized to implement Network Segmentation through pfSense. If you are looking for how to configure VLANs on a pfSense device, there is already excellent documentation available on the netgate website.<br>
 LINK: https://docs.netgate.com/pfsense/en/latest/vlan/configuration.html
 
-#### ♦️ VLANs
+### ♦️ VLANs
 A Virtual Local Area Network or VLAN is a software approach to segmenting a network. It essentially divides a network into multiple domains by assigning and identifying a unique tag on data packets, more specifically Ethernet frames, passing through the Data Link Layer.
 
-#### ♦️ Network Segmentation via VLANs
+### ♦️ Network Segmentation via VLANs
 The exact steps to creating and maintaining VLANs for network segmentation in pfSense are already outlined in the official documentation through the link above.
 
 The process of segmenting networks with VLANs essentially involves creating logical domains for each device or set of devices based on needs like performance and security.
@@ -138,7 +134,7 @@ You would then define these VLANs by assigning a subnet and then configuring the
 
 If utilizing multiple switches ― an advanced network setup ― you would then need to connect them together using "trunk links" to allow traffic from multiple VLANs to pass between the switches.
 
-#### ♦️ Best Practices
+### ♦️ Best Practices
 If your network environment necessitates a setup with numerous VLANs, it is absolutely recommended to keep a record of the IDs and assigned subnets in case there is a need to rebuild or reset the router. Most router software like pfSense offer a backup option for this.
 
 You can also indirectly improve QoS for specific services like VoIP by segregating devices that utilize them frequently to their own VLAN.
