@@ -100,39 +100,39 @@ Most people go by the following mirror link to obtain the exact version of pfSen
 Setting up pfSense is more or less a similar experience to installing Windows/Linux if not simpler. For the sake of brevity, this guide will only cover steps up to the point of getting pfSense functional. Configuring and customizing it to your home network's needs can be so vast that it would span multiple guides.
 
 ```
-**STEP 1: Download pfSense Install Image**
-- Go to the link provided above to obtain an appropriate install image of pfSense for your hardware.
-- Choose the architecture and select a mirror (download link).
+STEP 1: Download pfSense Install Image
+• Visit the provided link to obtain an appropriate install image of pfSense for your hardware.
+• Choose the architecture and select a mirror (download link).
 
-**STEP 2: Prepare bootable media (USB Drive)**
-- Ensure you have an empty USB Drive with space no less than 4GB.
-- Use an imaging software like Rufus to write the pfSense image to the USB Drive.
+STEP 2: Prepare bootable media (USB Drive)
+• This will require an empty 4GB+ USB Drive.
+• Use an imaging software like Rufus to write the pfSense image to the USB Drive.
 
-**STEP 3: Install pfSense**
-- Connect a temporary display to your custom router.
-- Boot from the USB Drive by selecting it in the BIOS or Boot Up menu.
-- Follow the on-screen instructions.
-- Select the disk you would like to install pfSense on.
-- Choose the filesystem (ZFS is sufficient).
-- Start the installation.
+STEP 3: Install pfSense
+• Connect a temporary display to your custom router.
+• Boot from the USB Drive by selecting it in the BIOS or Boot Up menu.
+• Follow the on-screen instructions.
+• Select the disk you would like to install pfSense on.
+• Choose the filesystem (ZFS is sufficient).
+• Start the installation.
 
-**STEP 4: Initial Configuration**
-- Go through the initial guided setup process.
-- Assign the correct network device to the appropriate interface e.g. set network card connected to modem or ISP PON device as the WAN interface.
-- Access the main interface by entering the pfSense login portal IP into a web browser.
-- Login with the default credentials (admin, pfsense).
-- Configure your network settings, firewall rules, and other desired settings.
+STEP 4: Initial Configuration
+• Go through the initial guided setup process.
+• Assign the correct network device to the appropriate interface.
+• E.g. Set the NIC connected to the ISP Modem or ONU/PON device as the WAN interface.
+• Access the main interface by entering the pfSense login portal IP into a web browser.
+• Login with the default credentials (admin, pfsense).
+• Configure your network settings, firewall rules, and other desired settings.
 ```
 
 ## VLAN Configuration
-### ♦️ VLANs
-The following will be a simplified explanation of what VLANs are and how they can be utilized to implement Network Segmentation through pfSense. If you are looking for how to configure VLANs on a pfSense device, there is already excellent documentation available on the netgate website.<br>
-<mark>LINK:</mark> https://docs.netgate.com/pfsense/en/latest/vlan/configuration.html
-
-A Virtual Local Area Network or VLAN is a software approach to segmenting a network. It essentially divides a network into multiple domains by assigning and identifying a unique tag on data packets, more specifically Ethernet frames, passing through the Data Link Layer.
+The following will be a simplified explanation of what VLANs are and how they can be utilized to implement Network Segmentation through pfSense. If you are looking for how to configure VLANs on a pfSense device, there is already excellent documentation available on the Netgate website.<br>
+<mark>LINK:</mark> https://docs.netgate.com/pfsense/en/latest/vlan/configuration.html  
 
 ### ♦️ Network Segmentation via VLANs
-The exact steps to creating and maintaining VLANs for network segmentation in pfSense are already outlined in the official documentation through the link above. I will however provide a summary below.
+The exact steps to creating and maintaining VLANs for network segmentation in pfSense are already outlined in the official documentation through the link above. I will however provide a summary below.  
+
+A Virtual Local Area Network or VLAN is a software approach to segmenting a network. It essentially divides a network into multiple domains by assigning and identifying a unique tag on data packets, more specifically Ethernet frames, passing through the Data Link Layer.  
 
 The process of segmenting networks with VLANs essentially involves creating logical domains for each device or set of devices based on needs like performance and security. You'll need an idea of what devices should be grouped together. Example:
 
@@ -153,30 +153,30 @@ Likewise, you should group highly sensitive devices like systems used for work o
 
 
 ## Additional Details
-### ♦️ Network Interface Card
-When choosing a network card for your build, it is often said that spending the extra and going for a genuine Intel-branded NIC can save you a lot of trouble in the process. This is true. However, an Intel NIC such as the X540-T2 may not make total sense depending on your budget and needs. Not to mention navigating a market of counterfeit NICs may not be the experience you're looking for.
+### ♦️ Network Interface Cards
+When choosing a network card for your build, it is often said that spending the extra and going for a genuine Intel-branded NIC can save you a lot of trouble in the process. This is generally true. However, an Intel NIC such as the X540-T2 may not make total sense depending on your budget and needs. Not to mention navigating a market of counterfeit NICs may not be the experience you're looking for.
 
-This is not to say that other brands or manufacturers of NICs simply make devices that won't work with pfSense or FreeBSD which is the underlying operating system. Quite the contrary, plenty of NICs out there, even the rather cheap Realtek TG-3468 can work. You may just need to be ready for potential curveballs as was the case with the HP332T used in this guide.
+This is not to say that other brands or manufacturers of NICs simply make devices that won't work with pfSense or FreeBSD. Quite the contrary, plenty of NICs out there, even the rather cheap Realtek TG-3468 can work. You may just need to be ready for potential curveballs as was the case with the Broadcom-based HP332T used in this guide.
 
 
-### ♦️ SMBus Issue with Intel H110 Chipset
-During the initial boot up phase, the computer would go through the standard POST process, followed by the BIOS screen. It is around here where the computer would appear to encounter problems with displaying the BIOS splashscreen when the HP332T network card was installed. Otherwise, the computer would boot up just fine. After much research, this issue seems to have stemmed from an SMBus issue.
+### ♦️ The Intel Chipset SMBus Issue
+During the initial boot up phase, the computer would go through the standard POST process, followed by the BIOS screen. It is around here where the computer would appear to encounter problems with displaying the BIOS splash screen when the HP332T network card was installed. Otherwise, the computer would boot up just fine. After much research, this issue seems to have stemmed from an SMBus issue.
 
-The SMBus or System Management Bus is a two-wire interface protocol used for low-speed communication between various components within a computer system especially those on a motherboard. During the boot up phase, computer components communicate with each other to establish identities and intiate as well as complete "handshake" processes in order to boot into Windows successfully.
+The SMBus or System Management Bus is a two-wire interface protocol used for low-speed communication between various components within a computer system especially those on a motherboard. During the boot up phase, computer components communicate with each other to establish identities, initiate "handshake" processes, and complete them in order to boot into Windows successfully.
 
 The Intel H110 Chipset has a specific bug where the boot up process of the motherboard it is part of gets interfered by the boot up process of another device (in this case, the HP332T NIC). This leads to a stall of sorts and the computer is not able to proceed further.
 
 
-### ♦️ Solution
+### ♦️ How I Fixed It
 The solution? We would need to prevent this clash of communication during boot by either making one of the devices recognize the other and apply a compensatory action (which is far too complicated to even attempt as we don't write drivers for any of these devices) or we could simply block them from "seeing" each other. What I mean is, by simply taping up the bins B5 & B6 on the PCIe connector of the HP332T NIC (these are used for communication through SMBus) the computer is now able to go through the booting process with no issues. Interestingly enough, the HP332T doesn't mind not getting a response from the motherboard, but such are the quirks of server-specific hardware.
 
 
 ### ♦️ Resources
-**PC not booting with specific PCIe network card**  
+**1. PC not booting with specific PCIe network card**  
 <mark>LINK:</mark> https://www.reddit.com/r/techsupport/comments/x6rujd/pc_not_booting_with_specific_pcie_network_card/
 
-**Discussion on overclock.net**  
+**2. Discussion on overclock.net**  
 <mark>LINK:</mark> https://www.overclock.net/threads/perc-5-i-raid-card-tips-and-benchmarks.359025/
 
-**Solution for HP331T**  
+**3. Solution for HP331T**  
 <mark>LINK:</mark> https://forums.servethehome.com/index.php?threads/hp-331t-network-adapter-on-asus-p9d-m-motherboard.4254/
