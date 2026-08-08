@@ -10,11 +10,11 @@ layout:
 # The tabs of sidebar
 tabs:
   # format: <filename_without_extension>: <value>
-  home: Home
-  categories: Categories
-  tags: Tags
-  archives: Archives
-  about: About
+  home: _home
+  categories: _categories
+  tags: _tags
+  archives: _archives
+  about: 
 
 # the text displayed in the search bar & search results
 search:
