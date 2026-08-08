@@ -5,13 +5,13 @@ categories: [research, reverse engineering]
 tags: [windows, reverse engineering, ghidra]     # TAG names should always be lowercase
 image: "/assets/images/reverse_p2.png"
 ---
-# Part 1 - Activation Mechanism
+## Activation Mechanism
 > GOAL: Decode the activation mechanism.
 
 I began the analysis by first making simple observations of the application's features. While the initial goal was to decode the activation mechanism, I still had to establish whether that was actually feasible with Puzzleball 3D. Below are the findings:
 
 ## Initial Observations
-### First Impressions
+### ♦️ First Impressions
 Launching Puzzleball 3D from either double-clicking the main .EXE or quick start icon presents a stylized "launcher" menu. The revision number is interestingly shown here at the bottom<br>
 ➠ Rev. 3744 Build 177.<br>
 
@@ -21,7 +21,7 @@ This was likely used for internal troubleshooting or to even help with customer 
 
 The highlighted text, ``...no additional download required``, indicates that the game install is complete in where all the required assets, data, and features are already present on the system and that the trial mode applies a digital/software lock. This is promising because it means reverse-engineering is feasible.
 
-### Exploring The Menus
+### ♦️ Exploring The Menus
 <img width="1280" height="720" alt="buttons" src="https://github.com/user-attachments/assets/6d8004b6-c7a4-4f98-b98b-1fa482416b92" />
 <br>
 
@@ -46,7 +46,7 @@ The other tabs are simply different payment methods for what used to be the way 
 ## Static Analysis
 After having established that reverse-engineering may be possible with Puzzleball 3D, I performed some basic static analysis using PE-bear to sift through the binary for string references and Ghidra to provide a graphical view of the functions.
 
-### PE-bear Findings
+### ♦️ PE-bear Findings
 Often times, the protection mechanism for an application is found in a separate binary or executable like a DLL file. This file runs in tandem with the main application and acts as a "security guard".
 
 This is why "cracks" back then came with 2 files; a **modified .EXE** executable and a **modified DLL** file, both of which you would have to copy over to the root directory of the relevant application in order to overwrite and neuter whatever protection mechanism was in place.
@@ -73,7 +73,7 @@ Aside from the intriguing "Decryption Key Data" string in the DLL file, there we
 
 While all of these strings looked enticing to follow, for the purposes of this project, ``unittest_ValidateUnlockCode`` seemed like the one closest to our goal of decoding the activation mechanism. Looking this up with Ghidra's search tool led to a function with that exact name.<br>
 
-### Ghidra Findings
+### ♦️ Ghidra Findings
 <img width="1280" height="720" alt="validateunlockcode func" src="https://github.com/user-attachments/assets/8036a678-83e4-42d0-aa5e-47b77beeddb4" /><br>
 
 The above is a "Ghidra representation" of the function,  ``unittest_ValidateUnlockCode``, translated from machine code into human-readable form. There are 3 variables being declared:
@@ -93,7 +93,6 @@ We also see that the function, ``FUN_1007ccbd``, is applied, if you will, in a c
 
 These two functions are likely not where the core logic or math for the activation mechanism is located but I still thought it important to delve deeper into ``FUN_1007ccbd`` in an attempt to fully deconstruct the routine.<br>
 
-#### FUNCTION 1007CCBD
 <img width="1280" height="720" alt="1007ccbd" src="https://github.com/user-attachments/assets/a4241188-18d7-4a69-8e79-6c54ddc8a0de" />
 
 Here we see a nested set of blocks that divide the assembly into several sections. Attempting to decode this without any dynamic analysis or runtime context took an immense amount of time and effort.
@@ -102,12 +101,13 @@ Suffice to say, this function essentially allocates system memory to load the va
 
 The presence of standard C library functions like ``_strlen``, ``_strncpy``, as well as ``operator_new`` (found within sub-function ``FUN_1007ebe0`` in ``FUN_1007ccbd``) are the biggest giveaways.
 
-#### FUNCTION 10018172
 <img width="1280" height="720" alt="10018172" src="https://github.com/user-attachments/assets/bdc224dd-b5b4-4ae8-bce3-4e7738de6ff7" />
 
 Backing out of ``FUN_1007ccbd`` and moving onto ``FUN_10018172``, we see a routine that is even more convoluted. Attempting to decode this with only information and context available through static analysis alone was near impossible, largely due to unknown items like ``DAT_100dc868`` and ``DAT_100dc86c`` as well as the numerous amount of nested functions.
 
 All that I could ascertain from this summarized view of ``FUN_10018172`` is that if the argument ``param_2`` contains a character 'F', then further processing is applied. Otherwise, the app's workflow would skip to the end and proceed to the next routine in the parent function which would be ``FUN_100180d1``.
+
+___
 
 ## Making A Decision
 Reverse-engineering is a process that can get quickly overwhelming if the right tools and methodology aren't applied. But as we'll see later, even that may not be enough to fully deconstruct something like Puzzleball 3D which, while not seriously obfuscated, is a relatively ancient application with peculiar design philosophies that don't necessarily agree with modern programming standards.
