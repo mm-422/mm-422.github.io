@@ -1,5 +1,5 @@
 ---
-title: "Legacy App Reverse Engineering P4 - The Story & Conclusion"
+title: "Legacy App Reverse Engineering P4 - Deciphering The Story"
 date: 2026-01-05 00:00:00 +/-TTTT
 categories: [research, reverse engineering]
 tags: [windows, reverse engineering, ghidra]     # TAG names should always be lowercase
