@@ -78,9 +78,11 @@ I prefer using a virtual machine for these tasks as they are easy to spool up wi
 Below are the environment details along with the specific settings applied.
 
 ### ♦️ The Virtual Machine
-- Set up Windows 10 22H2 64-bit through VirtualBox version 7.2.4.r170995.
-- Puzzleball 3D was likely designed for Windows XP 32-bit. However, replicating the exact OS env is not necessary for the goals of this project.
-- Allocated 4 logical cores (Zen 3 CPU) and 8GB of memory to Virtual Machine. This was sufficient for up to 3 instances of Ghidra + 1 instance of WinDbg simultaneously.
+- Set up Windows 10 22H2 64-bit on VirtualBox v7.2.4.r170995.
+- Puzzleball 3D was likely designed for Windows XP 32-bit.
+- However, replicating the exact OS env is not necessary for the goals of this project.
+- Allocated 4 logical cores (Zen 3 CPU) and 8GB of memory to Virtual Machine.
+- This was sufficient for up to 3 instances of Ghidra + 1 instance of WinDbg simultaneously.
 <img width="1280" height="720" alt="VM DESKTOP" src="https://github.com/user-attachments/assets/78035289-022b-4aff-8589-c7b2672860eb"/>
 
 ### ♦️ Files & File Paths
@@ -100,21 +102,21 @@ Initially, I relied on just x64dbg and PE-bear to do the heavy lifting. But this
 I would also be remiss to not mention the incredible use I've found in leveraging LLMs like ChatGPT and Gemini in order to perform tasks such as research for application design philosophies relevant to the early 2000s era as well as sifting through hundreds of lines of assembly code.
 
 Care should be taken when utilizing these technologies, especially when sensitive info is concerned. Considering the fact that Puzzleball 3D is openly available on sites like the Internet Archive with no relevant owners to contact and that hosting a local LLM would present its own set of challenges (cost, speed, reliability), the use of online hosted LLMs is justified in my opinion.
+```
+Static Analysis
+• PE-bear v0.7.1
+• Ghidra v11.4.2
 
-**Static Analysis**<br>
-• PE-bear <sub>v0.7.1</sub><br>
-• Ghidra <sub>v11.4.2</sub>
+Dynamic Analysis
+• WinDbg v1.2511.21001.0
+• x64dbg v0.0.2.5
+• Procmon v4.0.1
 
-**Dynamic Analysis**<br>
-• WinDbg <sub>v1.2511.21001.0</sub><br>
-• x64dbg <sub>v0.0.2.5</sub><br>
-• Procmon <sub>v4.0.1</sub>
-
-**Auxiliary**<br>
-• Detect-It-Easy <sub>v3.11</sub><br>
-• HxD <sub>v2.5.0.0</sub><br>
-• Spy++ <sub>v18.00.11101</sub>  
-
+Auxiliary
+• Detect-It-Easy v3.11
+• HxD v2.5.0.0
+• Spy++ v18.00.11101
+```
 ___
 
 ## Prologue
@@ -149,7 +151,7 @@ This complicated analysis methods like tracing user input and decoding integrity
 
 ### ♦️ Analysis Structure
 As outlined in the Executive Summary, the overall plan (initially at least) was to move from:<br>
-  _Initial Recon_ ➟ _Static Analysis_ ➟ _Dynamic Analysis_ ➟ _Summarize & Document_
+``Initial Recon`` ➟ ``Static Analysis`` ➟ ``Dynamic Analysis`` ➟ ``Summarize & Document``
 
 The sections in this analysis phase will be divided into several stages:
 - Parts 2 and 3 outline the intial approaches and why they failed.
