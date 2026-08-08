@@ -63,7 +63,9 @@ So, aside from upgrading your home router to a more premium, feature-full device
 - It is often tricky to find 3rd-party routers with the specs & features you need at a price point you may target.
 - DIY routers allow full customization e.g. upgrading to a faster processor or installing multiple NICs.
 
-Building your own router and pairing it with a robust software solution like **OPNSense** or **pfSense** for network segmentation is not as difficult as it may sound. It just requires some research and decent understanding of networking concepts which this guide aims to simplify.  
+Building your own router and pairing it with a robust software solution like **OPNSense** or **pfSense** for network segmentation is not as difficult as it may sound. It just requires some research and decent understanding of networking concepts which this guide aims to simplify.
+
+___
 
 ## pfSense Router Build
 ### ♦️ Hardware
@@ -125,6 +127,8 @@ STEP 4: Initial Configuration
 • Configure your network settings, firewall rules, and other desired settings.
 ```
 
+___
+
 ## VLAN Configuration
 The following will be a simplified explanation of what VLANs are and how they can be utilized to implement Network Segmentation through pfSense. If you are looking for how to configure VLANs on a pfSense device, there is already excellent documentation available on the Netgate website.<br>
 <mark>LINK:</mark> https://docs.netgate.com/pfsense/en/latest/vlan/configuration.html  
@@ -149,8 +153,9 @@ If your network environment necessitates a setup with numerous VLANs, it is abso
 
 You can also indirectly improve QoS for specific services like VoIP by segregating devices that utilize them frequently to their own VLAN.
 
-Likewise, you should group highly sensitive devices like systems used for work or finance in their own VLANs with restrictive security settings.  
+Likewise, you should group highly sensitive devices like systems used for work or finance in their own VLANs with restrictive security settings.
 
+___
 
 ## Additional Details
 ### ♦️ Network Interface Cards
