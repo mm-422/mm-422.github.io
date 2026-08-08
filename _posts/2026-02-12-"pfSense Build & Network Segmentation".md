@@ -56,12 +56,12 @@ So, aside from upgrading your home router to a more premium, feature-full device
 - You decide what configuration is right for your needs and avoid paying for unnecessary features.
 
 **2. Reduced Cost of Maintenance**
-- A failed router would usually necessitate a complete replacement due to it being a closed system that might even utilize proprietary design.
+- A failed router would usually necessitate a complete replacement due to it being a closed and proprietary system.
 - A DIY router is essentially a small computer with individual parts that utilize standardized form-factors, plugs, connectors, etc. that can be replaced as needed without having to discard the entire system.
 
-**3. Customization**
-- Often times, it is difficult to find an aftermarket router with the specs and features you need at the price point you may target.
-- DIY routers allow full customization like being able to upgrade the processor or install multiple NICs.
+**3. Customization & Future Upgrades**
+- It is often tricky to find 3rd-party routers with the specs & features you need at a price point you may target.
+- DIY routers allow full customization e.g. upgrading to a faster processor or installing multiple NICs.
 
 Building your own router and pairing it with a robust software solution like **OPNSense** or **pfSense** for network segmentation is not as difficult as it may sound. It just requires some research and decent understanding of networking concepts which this guide aims to simplify.  
 
@@ -87,18 +87,19 @@ SPECS SHEET
 _Parts used for the build. Was running real low on thermal paste._
 
 ### ♦️ Software & pfSense
-There are plenty of ways you can go about building a router. For example, you could run something like pfSense or OPNSense off of a Virtual Machine. Or you could go bare-metal with OpenWRT. But for this guide, we are going to be looking at a "native" setup of pfSense running on OpenBSD.
+There are plenty of ways you can go about building a router. For example, you could run something like pfSense or OPNSense off of a Virtual Machine. Or you could go bare-metal with OpenWRT. But for this guide, we are going to be looking at a "native" setup of pfSense running on OpenBSD.  
 
-As stated before, pfSense is open-source and is highly regarded in the world of security for its robust features and scalability. It also comes in a "Community Edition" that is free to download and use with no severe limitations, something you might come to expect from software this polished. Personally, I find the interface to be easy to navigate and user-friendly. It has also been absolutely reliable in the many months I've had it running.<br>
+As stated before, pfSense is open-source and is highly regarded in the world of security for its robust features and scalability. It also comes in a "Community Edition" that is free to download and use with no severe limitations, something you might come to expect from software this polished. Personally, I find the interface to be easy to navigate and user-friendly. It has also been absolutely reliable in the many months I've had it running.  
 
-### ♦️ Where do I get pfSense?  
+### ♦️ Where do I get pfSense?
 Typically, you would visit the pfSense.org site to download your preferred version (most likely the Community Edition) but the process of downloading seems a bit too intrusive with it requiring a registered account.
-Most people usually use the following mirror link to obtain the exact version of pfSense for their use case e.g. ``pfSense-CE-<"version_number">-RELEASE-amd64.iso.gz``<br>
+Most people go by the following mirror link to obtain the exact version of pfSense for their use case e.g. ``pfSense-CE-<"version_number">-RELEASE-amd64.iso.gz``<br>
 <mark>LINK:</mark> https://atxfiles.netgate.com/mirror/downloads/
 
-### ♦️ How To Install pfSense?  
+### ♦️ How To Install pfSense?
 Setting up pfSense is more or less a similar experience to installing Windows/Linux if not simpler. For the sake of brevity, this guide will only cover steps up to the point of getting pfSense functional. Configuring and customizing it to your home network's needs can be so vast that it would span multiple guides.
 
+```
 **STEP 1: Download pfSense Install Image**
 - Go to the link provided above to obtain an appropriate install image of pfSense for your hardware.
 - Choose the architecture and select a mirror (download link).
@@ -121,7 +122,7 @@ Setting up pfSense is more or less a similar experience to installing Windows/Li
 - Access the main interface by entering the pfSense login portal IP into a web browser.
 - Login with the default credentials (admin, pfsense).
 - Configure your network settings, firewall rules, and other desired settings.
-
+```
 
 ## VLAN Configuration
 ### ♦️ VLANs
@@ -131,15 +132,17 @@ The following will be a simplified explanation of what VLANs are and how they ca
 A Virtual Local Area Network or VLAN is a software approach to segmenting a network. It essentially divides a network into multiple domains by assigning and identifying a unique tag on data packets, more specifically Ethernet frames, passing through the Data Link Layer.
 
 ### ♦️ Network Segmentation via VLANs
-The exact steps to creating and maintaining VLANs for network segmentation in pfSense are already outlined in the official documentation through the link above.
+The exact steps to creating and maintaining VLANs for network segmentation in pfSense are already outlined in the official documentation through the link above. I will however provide a summary below.
 
-The process of segmenting networks with VLANs essentially involves creating logical domains for each device or set of devices based on needs like performance and security.
+The process of segmenting networks with VLANs essentially involves creating logical domains for each device or set of devices based on needs like performance and security. You'll need an idea of what devices should be grouped together. Example:
 
-You would first plan the overall network structure. For example, VLAN 10 would be for the workstation computer whereas VLAN 20 would be for mobile devices, followed by VLAN 30 which is configured for visiting guests.
+```
+• "VLAN 10" for the workstation computer.
+• "VLAN 20" for mobile devices.
+• "VLAN 30" which is configured for visiting guests.
+```
 
-You would then define these VLANs by assigning a subnet and then configuring the devices to the specific VLANs as planned.
-
-If utilizing multiple switches ― an advanced network setup ― you would then need to connect them together using "trunk links" to allow traffic from multiple VLANs to pass between the switches.
+You would then define these VLANs in pfSense by assigning a dedicated subnet for each. If utilizing multiple switches (an advanced network setup) you would then need to connect them together using "trunk links" to allow traffic from multiple VLANs to pass between the switches.
 
 ### ♦️ Best Practices
 If your network environment necessitates a setup with numerous VLANs, it is absolutely recommended to keep a record of the IDs and assigned subnets in case there is a need to rebuild or reset the router. Most router software like pfSense offer a backup option for this.
@@ -169,11 +172,11 @@ The solution? We would need to prevent this clash of communication during boot b
 
 
 ### ♦️ Resources
-**PC not booting with specific PCIe network card**
+**PC not booting with specific PCIe network card**  
 <mark>LINK:</mark> https://www.reddit.com/r/techsupport/comments/x6rujd/pc_not_booting_with_specific_pcie_network_card/
 
-**Discussion on overclock.net**
+**Discussion on overclock.net**  
 <mark>LINK:</mark> https://www.overclock.net/threads/perc-5-i-raid-card-tips-and-benchmarks.359025/
 
-**Solution for HP331T**
+**Solution for HP331T**  
 <mark>LINK:</mark> https://forums.servethehome.com/index.php?threads/hp-331t-network-adapter-on-asus-p9d-m-motherboard.4254/
