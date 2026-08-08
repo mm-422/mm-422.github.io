@@ -83,7 +83,8 @@ SPECS SHEET
 [+] Network Card: HP 332T powered by Broadcom BCM5720
 ```
 
-<img src="/assets/images/router build.png" />
+![img-description](/assets/images/router build.png)
+_Parts used for the build. CPU installed. Was running real low on thermal paste._
 
 ### ♦️ Software & pfSense
 There are plenty of ways you can go about building a router. For example, you could run something like pfSense or OPNSense off of a Virtual Machine. Or you could go bare-metal with OpenWRT. But for this guide, we are going to be looking at a "native" setup of pfSense running on OpenBSD.
