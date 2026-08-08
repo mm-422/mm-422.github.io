@@ -20,17 +20,17 @@ For this venture, I explore what **Network Segmentation** means under the contex
 ### ♦️ Definition & Importance
 Network Segmentation is a term often used in the cybersecurity and networking world to describe the practice of dividing computer networks into smaller, isolated segments (often called subnets) to allow for better control over network traffic, performance, and security.  
 
-Often times, network segmentation is used for isolating high-value or security-sensitive devices from other common devices. An example of this in a home-office type setting may be a **work computer** that is used for conducting banking activities being put on a network that is separate from one serving the mobile devices of visiting guests.
+Often times, network segmentation is used for isolating high-value or security-sensitive devices from other common devices. **Example:** A home-office type setting with a work computer that is used for conducting banking activities being put on a network that is separate from one serving the mobile devices of visiting guests.
 
 In today's high-speed digital landscape, our devices help facilitate activities such as online banking and e-commerce. These activities often include the exchange of critical personal and financial information. These bits of information are still very much targeted by malicious entities and recent developments in the world of security have shown that safety is not guaranteed even in your own home network utilizing equipment **you've bought and paid for.**
 
 Most of us would highly prefer to conduct in-person transactions for physical items at a safe and secure location. In that vein, it only makes sense that we secure our home networks for digital transactions. Especially in the case of work-at-home type settings as they are becoming more and more ubiquitous.  
 
-While network segmentation alone is not the "be-all and end-all" to good home network security, the good news is that implementing a relatively simple yet highly effective measure such as network segmentation in a home or small office environment does not need to be a complicated endeavor.
+While network segmentation alone is not the "be-all and end-all" to good home network security, implementing this simple yet highly effective measure in a home or small office environment can be an easy weekend project.
 
 ### ♦️ Implementation Methods
 ``Physical Segmentation``
-- Involves creating separate networks by utilizing dedicated hardware such as switches and routers.
+- Involves creating separate networks by utilizing dedicated hardware e.g. switches and routers.
 - Example: Work computer is connected to a dedicated LAN port on a smart switch instead of the home WiFi which shares its connection with many other devices.
  
 ``Software Defined Networks (SDN)``
