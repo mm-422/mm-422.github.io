@@ -60,13 +60,15 @@ Auxiliary
 • PE-bear for quick string searches.
 • Detect-It-Easy for app property inspection.
 ```
-_All testing performed in a controlled Windows 10 22H2 VM._
+_All testing done in a controlled Windows 10 22H2 VM._
 
 ### ♦️ Takeaways
 - Focus should be on understanding the intended design behind an application.
 - Most if not all client-side validation is "doomed" with modern analysis and debugging tools.
 - Clear documentation helps tremendously with prolonged debugging sessions.
 - Design oversights and security mistakes seen in a 20-year old app can still be seen today.<br>
+
+___
 
 ## The Environment
 A testing environment including all the necessary tools and appropriate settings is paramount to reverse engineering, especially when analyzing (potentially) malicious software.
@@ -111,7 +113,9 @@ Care should be taken when utilizing these technologies, especially when sensitiv
 **Auxiliary**<br>
 • Detect-It-Easy <sub>v3.11</sub><br>
 • HxD <sub>v2.5.0.0</sub><br>
-• Spy++ <sub>v18.00.11101</sub>
+• Spy++ <sub>v18.00.11101</sub>  
+
+___
 
 ## Prologue
 ### ♦️ Motivation
