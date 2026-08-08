@@ -22,83 +22,80 @@ Network Segmentation is an often-used term in the cybersecurity and networking w
 
 Often times, network segmentation is used for isolating high-value or security-sensitive devices from other common devices. In a home office type setting, this may be a work computer that is used for banking, being put on a network that is separate from one serving the mobile devices of visiting guests i.e. untrusted devices.
 
-In today's high-speed digital landscape, our devices help facilitate activities such as online banking and e-commerce. These activities often involve the input of personal and/or financial information. And these bits of information *(see what I did there?)* are still very much targeted by malicious entities. Recent developments in the world of security have shown that safety is not guaranteed even in your own home network utilizing equipment <mark>you've bought and paid for.</mark>
+In today's high-speed digital landscape, our devices help facilitate activities such as online banking and e-commerce. These activities often involve the input of personal and/or financial information. And these bits of information *(see what I did there?)* are still very much targeted by malicious entities. Recent developments in the world of security have shown that safety is not guaranteed even in your own home network utilizing equipment **you've bought and paid for.**
 
 Most of us would highly prefer to conduct in-person transactions for physical items at a safe and secure location. In the same vein, it only makes sense that we secure our home networks for digital transactions. Especially in the case of work-at-home type settings as they are becoming more and more ubiquitous.  
 
 While network segmentation alone is not the "be-all and end-all" to good home network security, implementing this simple yet highly effective measure in a home or small office environment can be an easy weekend project.
 
 ### ♦️ Implementation Methods
-<mark> Physical Segmentation </mark>
+**1. Physical Segmentation**
 - Involves creating separate networks by utilizing dedicated hardware e.g. switches and routers.
 - Example: Work computer is connected to a dedicated LAN port on a smart switch instead of the home WiFi network which is shared between many other devices.
  
-<mark> Software Defined Networks (SDN) </mark>
+**2. Software Defined Networks (SDN)**
 - A software controller manages the entire network in real time.
 - Network is segmented at an architectural level.
 - Widely used in data centers and cloud networks.
 
-<mark> Virtual Local Area Networks (VLAN) </mark>
+**3. Virtual Local Area Networks (VLAN)**
 - Networks are segmented at a logical level.
 - Operates at Layer 2 (Data Link).
 - Assigns a unique tag to each packet/frame to create logical groupings.
 
 ### ♦️ Limitations
-Typical networking equipment like routers supplied by ISPs are usually woefully inadequate for the purposes of safeguarding against modern day threats. The operating system is often stripped down to only enable simple functionality and maintenance. This could be done for a multitude of reasons like upselling customers to a more expensive subscription. Besides, the ISPs don't really want you to go messing about with the router settings in the first place anyway.
+Most home networks consist of basic routers supplied by ISPs. These are typically inadequate for the purposes of safeguarding against modern day threats. The operating system is often stripped down to only enable simple functionality and maintenance. This could be done for a multitude of reasons like up-selling customers to a more expensive subscription. Besides, the ISPs don't really want you to go messing about with the router settings in the first place anyway.
 
-There are plenty of commercial solutions out there that can help you to achieve Network Segmentation quick and easy but they may also be costly and come with their own set of caveats. The ASUS router software exploits of recent times come to mind.
+There are plenty of commercial solutions out there that can help you to achieve Network Segmentation quick and easy but they may also be costly and come with their own set of caveats. The ASUS router software exploits of recent times come to mind (**CVE-2026-13385** among others).
 
-So, aside from upgrading your home router to a more premium, feature-full device, there is the option of building one from scratch. Networking devices like modems and routers are after all, essentially mini computers with their own set of processors, memory, and storage.
-
-A DIY router does not need to consist of premium and/or specialized parts. In fact, spare parts from an old build or laptop can be repurposed in order to minimize cost.
+So, aside from upgrading your home router to a more premium, feature-full device, there is the option of building one from scratch. Networking devices like modems and routers are essentially mini computers with their own set of processors, memory, and storage. A do-it-yourself router does not require premium and/or specialized parts. In fact, spare parts from an old build or laptop can be repurposed in order to minimize cost.
 
 ### ♦️ DIY Benefits
-> Benefits of building your own router to allow for effective segmentation.
-
-These are some of the pros of going with a DIY approach:
-
-``Complete Control``
+**1. Complete Control**
 - You decide what OS to run on the device and what settings are available.
+- You decide what configuration is right for your needs and avoid paying for unnecessary features.
 
-``Reduced Cost of Maintenance``
+**2. Reduced Cost of Maintenance**
 - A failed router would usually necessitate a complete replacement due to it being a closed system that might even utilize proprietary design.
-- A DIY router is essentially a small computer with individual parts that utilize standardized plugs, connectors, etc. that can be replaced as needed without having to discard the entire system.
+- A DIY router is essentially a small computer with individual parts that utilize standardized form-factors, plugs, connectors, etc. that can be replaced as needed without having to discard the entire system.
 
-``Customization``
+**3. Customization**
 - Often times, it is difficult to find an aftermarket router with the specs and features you need at the price point you may target.
 - DIY routers allow full customization like being able to upgrade the processor or install multiple NICs.
 
-Building your own router and pairing it with a robust software solution like OPNSense or pfSense for network segmentation is very much achieveable and not as difficult as it may sound. It just requires some research ― which this guide aims to simplify ― alongside decent understanding of networking concepts and how to configure network equipment.  
+Building your own router and pairing it with a robust software solution like **OPNSense** or **pfSense** for network segmentation is not as difficult as it may sound. It just requires some research and decent understanding of networking concepts which this guide aims to simplify.  
 
 ## pfSense Router Build
 ### ♦️ Hardware
-Since we will be building a machine from scratch, this list of parts might look very similar to a typical DIY computer build used for gaming or rendering. A router is basically a small computer after all and building our own brings with it plenty of benefits such as relatively infinite levels of serviceability, potentially better performance and even security.
+Since we'll be building a machine from scratch, this list of parts might look very similar to a typical DIY desktop build. A router is basically a small computer after all and building our own brings with it plenty of benefits such as relatively infinite levels of serviceability, potentially better performance, and robust security.
 
-It should be stated that there is no need to purchase brand new parts. Used parts such as those that were used in this guide will do just fine ― and I even encourage it as it helps to reduce e-waste. Unless you're building for high availability (well outside the scope of this write up) a simple computer with a good Network Interface Card (NIC) should be plenty.
+It should be stated that there is no need to purchase brand new parts. Used parts will do just fine and I even encourage it for the sake of reducing e-waste. Unless you're building for high availability (well outside the scope of this write-up) a simple computer with a good Network Interface Card (NIC) should be plenty.
 
-All in all, this build cost me a grand total of ~$40. And that's only because I had to buy new memory to replace a faulty stick. Otherwise the only cost would've been the NIC and SSD.
+All in all, excluding the parts I had laying around, this build cost me a grand total of ~$40. And that's only because I had to buy new memory to replace a faulty stick. Otherwise the only cost would've been the NIC and SSD.
 
-**Parts used:**
-- Processor : ``Intel Core i3 6100 3.7GHz``
-- Memory : ``Kingston HyperX 4GB 2400MHz DDR4``
-- Motherboard : ``Gigabyte H110-M Gaming 3``
-- Storage : ``Samsung PM871 120GB``
-- Case & PSU : ``Slevcase Spotless w/ 300W Power Supply``
-- Network Card : ``HP 332T powered by Broadcom BCM5720``
-<img width="2028" height="1326" alt="Untitled" src="https://github.com/user-attachments/assets/79f9b67e-47d6-4fb5-8bec-12e59ba40b0a" />
+```
+SPECS SHEET
+[+] Processor: Intel Core i3 6100 3.7GHz
+[+] Memory: Kingston HyperX 4GB 2400MHz DDR4
+[+] Motherboard: Gigabyte H110-M Gaming 3
+[+] Storage: Samsung PM871 120GB
+[+] Case & PSU: Slevcase Spotless w/ 300W Power Supply
+[+] Network Card: HP 332T powered by Broadcom BCM5720
+```
 
-### ♦️ Software
-There are plenty of ways you can go about building a router. For example, you could run something like pfSense or OPNSense off of a Virtual Machine. You could even go with OpenWRT or Merlin (ASUS's own flavor of OpenWRT). But for this guide, we are going to be looking at a "native" setup of pfSense running on OpenBSD.
+<img src="/assets/images/router build.png" />
 
-### ♦️ Why pfSense?<br>
+### ♦️ Software & pfSense
+There are plenty of ways you can go about building a router. For example, you could run something like pfSense or OPNSense off of a Virtual Machine. Or you could go bare-metal with OpenWRT. But for this guide, we are going to be looking at a "native" setup of pfSense running on OpenBSD.
+
 As stated before, pfSense is open-source and is highly regarded in the world of security for its robust features and scalability. It also comes in a "Community Edition" that is free to download and use with no severe limitations, something you might come to expect from software this polished. Personally, I find the interface to be easy to navigate and user-friendly. It has also been absolutely reliable in the many months I've had it running.<br>
 
-### ♦️ Where do I get pfSense?<br>
+### ♦️ Where do I get pfSense?  
 Typically, you would visit the pfSense.org site to download your preferred version (most likely the Community Edition) but the process of downloading seems a bit too intrusive with it requiring a registered account.
 Most people usually use the following mirror link to obtain the exact version of pfSense for their use case eg. ``pfSense-CE-<"version_number">-RELEASE-amd64.iso.gz``<br>
 LINK: https://atxfiles.netgate.com/mirror/downloads/
 
-### ♦️ How To Install pfSense?<br>
+### ♦️ How To Install pfSense?  
 If you've ever had to install an operating system, installing pfSense is more or less a similar experience if a little simpler. For the sake of brevity, this guide will only cover steps up to the point of getting pfSense functional. Configuring it and customizing settings to your home network's needs can be so vast that it could be its own guide.
 
 ### ♦️ Installation Steps
