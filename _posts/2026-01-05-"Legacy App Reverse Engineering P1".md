@@ -7,7 +7,6 @@ image: "/assets/images/reverse_p1.png"
 ---
 
 ## Executive Summary
-### ♦️ Overview 
 This project documents a thorough analysis of an early-2000s era application and its components by way of Reverse Engineering. Aspects such as the authentication mechanism, file integrity checks, UI construction and more are covered.
 
 The goal is to demonstrate the importance of understanding an application's intended design and behavior **before** any application of technical steps and methodologies.
@@ -15,7 +14,7 @@ The goal is to demonstrate the importance of understanding an application's inte
 The legacy application in question is a video game that was primarily distributed on Windows circa early to mid 2000s. This game implemented custom routines and file validation mechanisms in order to fight off tampering.
 
 While the original servers and publisher are no longer operational, for the sake of ethics, the exact name of this application and images of its components will be obfuscated as necessary.
-Hence, the video game app will be referred to as "Puzzleball 3D" throughout the case study.<br>
+Hence, the video game app will be referred to as "Puzzleball 3D" throughout the case study.  
 
 ### ♦️ Project Goals
 - Analyze the structure and behavior of legacy authentication mechanisms.
@@ -26,24 +25,24 @@ Hence, the video game app will be referred to as "Puzzleball 3D" throughout the 
 - Start with basic reconnaissance to gather preliminary info for later analysis.
 - Apply static analysis methods to identify functions and algorithm patterns.
 - Move to dynamic analysis to observe application behavior.
-- Determine potential vulnerabities and attack vectors.
-- Document.
+- Determine potential vulnerabilities and attack vectors.
+- Document findings.
 
 ### ♦️ Scope & Ethical Considerations
 - This project focuses on understanding mechanisms and applying methodology.
 - This project _**DOES NOT**_ distribute material that would encourage piracy.
-- No KeyGen or hacktool creation is demonstrated.
+- <mark>No KeyGen or hacktool creation is demonstrated.</mark>
 - Any example of weaponization potential is done under an educational lens.
 - While the application for this project can be found on sites like the Internet Archive, no form of source code or vendor documentation is available.<br>
 
 ### ♦️ Technical Summary
-- Observed application behavior with regard to user input.
+- Observed app behavior with regard to user input.
 - Performed static & dynamic analysis on both the main executable and an auxiliary DLL.
 - Investigated file integrity checks within application's binary.
 - Identified validation logic and performed bypass.
 - Evaluated security weaknesses and weaponization potential.<br>
 
-## Tools Used
+### ♦️ Tools Used
 ```
 Disassemblers
 • Ghidra
@@ -60,11 +59,10 @@ Auxiliary Tools
 • HxD for editing hex.
 • PE-bear for quick string searches.
 • Detect-It-Easy for app property inspection.
-• GIMP, Notepad, and LibreOffice for mind maps and notes.
 
 All testing was performed in a controlled Windows 10 22H2 VM.
 ```
-## Takeaways
+### ♦️ Takeaways
 - Focus should be on understanding the intended design behind an application.
 - Most if not all client-side validation is "doomed" with modern analysis and debugging tools.
 - Clear documentation helps tremendously with prolonged debugging sessions.
@@ -79,13 +77,10 @@ Below are the environment details along with the specific settings applied.
 
 ## The Virtual Machine
 - Set up Windows 10 22H2 64-bit through VirtualBox version 7.2.4.r170995.
-- Puzzleball 3D was likely designed for Windows XP 32-bit.
-- However, replicating the exact OS env is not necessary for the goals of this project.
-<img width="1280" height="720" alt="VM DESKTOP" src="https://github.com/user-attachments/assets/78035289-022b-4aff-8589-c7b2672860eb" />
-
-## Resources
+- Puzzleball 3D was likely designed for Windows XP 32-bit. However, replicating the exact OS env is not necessary for the goals of this project.
 - Allocated 4 logical cores (Zen 3 CPU) and 8GB of memory to Virtual Machine.
 - This was sufficient for up to 3 instances of Ghidra + 1 instance of WinDbg simultaneously.
+<img width="1280" height="720" alt="VM DESKTOP" src="https://github.com/user-attachments/assets/78035289-022b-4aff-8589-c7b2672860eb"/>
 
 ## Files & File Paths
 - Created a backup of Puzzleball 3D's files on external media.
@@ -98,39 +93,36 @@ Below are the environment details along with the specific settings applied.
 - Added the "Desktop" directory to Windows Defender's exception list.
 - Left ASLR and default memory integrity settings like Core Isolation alone.
 
-## The Tools
-## Summary
+## Tools & Process
 Initially, I relied on just x64dbg and PE-bear to do the heavy lifting. But this was only sufficient for some static analysis. Eventually, I moved on to Ghidra + WinDbg as my potent duo, while also discovering plenty of incredible tools like Spy++ and Detect-It-Easy along the way.
 
 I would also be remiss to not mention the incredible use I've found in leveraging LLMs like ChatGPT and Gemini in order to perform tasks such as research for application design philosophies relevant to the early 2000s era as well as sifting through hundreds of lines of assembly code.
 
 Care should be taken when utilizing these technologies, especially when sensitive info is concerned. Considering the fact that Puzzleball 3D is openly available on sites like the Internet Archive with no relevant owners to contact and that hosting a local LLM would present its own set of challenges (cost, speed, reliability), the use of online hosted LLMs is justified in my opinion.
 
-## Static Analysis
+**Static Analysis**
 - PE-bear <sub>v0.7.1</sub>
 - Ghidra <sub>v11.4.2</sub>
 
-## Dynamic Analysis
+**Dynamic Analysis**
 - WinDbg <sub>v1.2511.21001.0</sub>
 - x64dbg <sub>v0.0.2.5</sub>
 - Procmon <sub>v4.0.1</sub>
 
-## Auxiliary
+**Auxiliary**
 - Detect-It-Easy <sub>v3.11</sub>
 - HxD <sub>v2.5.0.0</sub>
 - Spy++ <sub>v18.00.11101</sub>
 
-# PROLOGUE
-> A preface detailing the reasoning and approach.
-
-## Motivation
-I wanted to explore reverse engineering ― an often challenging area of cybersecurity ― through a real-world application rather than a purpose-built "crackme" or tutorial-style test program.
+## Prologue
+### ♦️ Motivation
+I wanted to explore reverse engineering (an often challenging area of cybersecurity) through a real-world application rather than a purpose-built "crackme" or tutorial-style test program.
 
 Initially, the goal was to deconstruct a target application in order to understand its components like the activation mechanism, validation routines etc.
 
 While the early attempts were met with failure, I was able to refine my ability to reason about the intended design behind the target app and strengthen my proficiency with the relevant tools and methodology with each iteration.
 
-## Historical Context
+### ♦️ Historical Context
 Puzzleball 3D is a Windows-based video game released in the early 2000s, with a free trial that relied on CD-keys for activation; a typical mechanism for the time.
 
 This period of software distribution was also rife with "cracks" and "keygens", which were tools designed to circumvent and/or bypass legacy copy protection and enable piracy.
@@ -152,12 +144,12 @@ For example, simple assets for the launcher like text preceding an input field w
 
 This complicated analysis methods like tracing user input and decoding integrity checks, as will be demonstrated in a later part.
 
-## Analysis Structure
+### ♦️ Analysis Structure
 As outlined in the Executive Summary, the overall plan (initially at least) was to move from:<br>
   _Initial Recon_ ➟ _Static Analysis_ ➟ _Dynamic Analysis_ ➟ _Summarize & Document_
 
 The sections in this analysis phase will be divided into several stages:
-- Parts 1 and 2 outline the intial approaches and why they failed.
-- Part 3 details the path that ultimately succeeded.
+- Parts 2 and 3 outline the intial approaches and why they failed.
+- Part 4 details the path that ultimately succeeded.
 
 This project is presented strictly for educational purposes. No cracks, activation keys, or hack tools intended on enabling piracy are provided.
