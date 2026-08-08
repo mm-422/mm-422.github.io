@@ -18,13 +18,13 @@ For this venture, I explore what **Network Segmentation** means under the contex
 
 ## Network Segmentation
 ### ♦️ Definition & Importance
-Network Segmentation is a term often used in the cybersecurity and networking world to describe the practice of dividing computer networks into smaller, isolated segments (often called subnets) to allow for better control over network traffic, performance, and security.  
+Network Segmentation is an often-used term in the cybersecurity and networking world to describe the practice of dividing computer networks into smaller, isolated segments (often called subnets) to allow for better control over network traffic, performance, and security.  
 
-Often times, network segmentation is used for isolating high-value or security-sensitive devices from other common devices. **Example:** A home-office type setting with a work computer that is used for conducting banking activities being put on a network that is separate from one serving the mobile devices of visiting guests.
+Often times, network segmentation is used for isolating high-value or security-sensitive devices from other common devices. In a home office type setting, this may be a work computer that is used for banking, being put on a network that is separate from one serving the mobile devices of visiting guests i.e. untrusted devices.
 
-In today's high-speed digital landscape, our devices help facilitate activities such as online banking and e-commerce. These activities often include the exchange of critical personal and financial information. These bits of information are still very much targeted by malicious entities and recent developments in the world of security have shown that safety is not guaranteed even in your own home network utilizing equipment **you've bought and paid for.**
+In today's high-speed digital landscape, our devices help facilitate activities such as online banking and e-commerce. These activities often involve the input of personal and/or financial information. And these bits of information (see what I did there?) are still very much targeted by malicious entities. Recent developments in the world of security have shown that safety is not guaranteed even in your own home network utilizing equipment **you've bought and paid for.**
 
-Most of us would highly prefer to conduct in-person transactions for physical items at a safe and secure location. In that vein, it only makes sense that we secure our home networks for digital transactions. Especially in the case of work-at-home type settings as they are becoming more and more ubiquitous.  
+Most of us would highly prefer to conduct in-person transactions for physical items at a safe and secure location. In the same vein, it only makes sense that we secure our home networks for digital transactions. Especially in the case of work-at-home type settings as they are becoming more and more ubiquitous.  
 
 While network segmentation alone is not the "be-all and end-all" to good home network security, implementing this simple yet highly effective measure in a home or small office environment can be an easy weekend project.
 
