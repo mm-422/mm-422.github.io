@@ -84,7 +84,7 @@ SPECS SHEET
 ```
 
 ![img-description](/assets/images/router build.png)
-_Parts used for the build. CPU installed. Was running real low on thermal paste._
+_Parts used for the build. Was running real low on thermal paste._
 
 ### ♦️ Software & pfSense
 There are plenty of ways you can go about building a router. For example, you could run something like pfSense or OPNSense off of a Virtual Machine. Or you could go bare-metal with OpenWRT. But for this guide, we are going to be looking at a "native" setup of pfSense running on OpenBSD.
@@ -93,22 +93,21 @@ As stated before, pfSense is open-source and is highly regarded in the world of 
 
 ### ♦️ Where do I get pfSense?  
 Typically, you would visit the pfSense.org site to download your preferred version (most likely the Community Edition) but the process of downloading seems a bit too intrusive with it requiring a registered account.
-Most people usually use the following mirror link to obtain the exact version of pfSense for their use case eg. ``pfSense-CE-<"version_number">-RELEASE-amd64.iso.gz``<br>
-LINK: https://atxfiles.netgate.com/mirror/downloads/
+Most people usually use the following mirror link to obtain the exact version of pfSense for their use case e.g. ``pfSense-CE-<"version_number">-RELEASE-amd64.iso.gz``<br>
+<mark>LINK:</mark> https://atxfiles.netgate.com/mirror/downloads/
 
 ### ♦️ How To Install pfSense?  
-If you've ever had to install an operating system, installing pfSense is more or less a similar experience if a little simpler. For the sake of brevity, this guide will only cover steps up to the point of getting pfSense functional. Configuring it and customizing settings to your home network's needs can be so vast that it could be its own guide.
+Setting up pfSense is more or less a similar experience to installing Windows/Linux if not simpler. For the sake of brevity, this guide will only cover steps up to the point of getting pfSense functional. Configuring and customizing it to your home network's needs can be so vast that it would span multiple guides.
 
-### ♦️ Installation Steps
-**STEP 1 - Download pfSense Install Image**
-- Go to the link provided above to obtain an appropriate installation image of pfSense for your hardware.
+**STEP 1: Download pfSense Install Image**
+- Go to the link provided above to obtain an appropriate install image of pfSense for your hardware.
 - Choose the architecture and select a mirror (download link).
 
-**STEP 2 - Prepare bootable media (USB Drive)**
+**STEP 2: Prepare bootable media (USB Drive)**
 - Ensure you have an empty USB Drive with space no less than 4GB.
 - Use an imaging software like Rufus to write the pfSense image to the USB Drive.
 
-**STEP 3 - Install pfSense**
+**STEP 3: Install pfSense**
 - Connect a temporary display to your custom router.
 - Boot from the USB Drive by selecting it in the BIOS or Boot Up menu.
 - Follow the on-screen instructions.
@@ -116,18 +115,18 @@ If you've ever had to install an operating system, installing pfSense is more or
 - Choose the filesystem (ZFS is sufficient).
 - Start the installation.
 
-**STEP 4 - Initial Configuration**
-- Go through the initial setup process.
-- Assign the correct network device to the appropriate interface eg. set network card connected to modem or ISP PON device as WAN interface.
-- Access pfSense interface by entering the pfSense IP address into a web browser.
+**STEP 4: Initial Configuration**
+- Go through the initial guided setup process.
+- Assign the correct network device to the appropriate interface e.g. set network card connected to modem or ISP PON device as the WAN interface.
+- Access the main interface by entering the pfSense login portal IP into a web browser.
 - Login with the default credentials (admin, pfsense).
 - Configure your network settings, firewall rules, and other desired settings.
-<br><br>
+
 
 ## VLAN Configuration
 ### ♦️ VLANs
 The following will be a simplified explanation of what VLANs are and how they can be utilized to implement Network Segmentation through pfSense. If you are looking for how to configure VLANs on a pfSense device, there is already excellent documentation available on the netgate website.<br>
-LINK: https://docs.netgate.com/pfsense/en/latest/vlan/configuration.html
+<mark>LINK:</mark> https://docs.netgate.com/pfsense/en/latest/vlan/configuration.html
 
 A Virtual Local Area Network or VLAN is a software approach to segmenting a network. It essentially divides a network into multiple domains by assigning and identifying a unique tag on data packets, more specifically Ethernet frames, passing through the Data Link Layer.
 
@@ -171,10 +170,10 @@ The solution? We would need to prevent this clash of communication during boot b
 
 ### ♦️ Resources
 **PC not booting with specific PCIe network card**
-: https://www.reddit.com/r/techsupport/comments/x6rujd/pc_not_booting_with_specific_pcie_network_card/
+<mark>LINK:</mark> https://www.reddit.com/r/techsupport/comments/x6rujd/pc_not_booting_with_specific_pcie_network_card/
 
 **Discussion on overclock.net**
-: https://www.overclock.net/threads/perc-5-i-raid-card-tips-and-benchmarks.359025/
+<mark>LINK:</mark> https://www.overclock.net/threads/perc-5-i-raid-card-tips-and-benchmarks.359025/
 
 **Solution for HP331T**
-: https://forums.servethehome.com/index.php?threads/hp-331t-network-adapter-on-asus-p9d-m-motherboard.4254/
+<mark>LINK:</mark> https://forums.servethehome.com/index.php?threads/hp-331t-network-adapter-on-asus-p9d-m-motherboard.4254/
