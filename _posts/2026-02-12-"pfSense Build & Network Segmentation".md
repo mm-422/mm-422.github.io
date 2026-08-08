@@ -5,11 +5,11 @@ categories: [research, networking]
 tags: [pfsense, hardware, router]     # TAG names should always be lowercase
 image: "/assets/images/pfsense_rev.png"
 ---
-## Executive Summary
-This project explores what Network Segmentation means under the context of small/home office. It makes the argument for why segmentation can be important even in SoHo settings, especially with modern use cases and scenarios. This is then followed up with a custom router build showcasing off-the-shelf parts that should be accessible to most people. We then cover the installation and configuration of an enterprise-tier networking and firewall software called pfSense.
+## Project Overview
+For this venture, I explore what **Network Segmentation** means under the context of small/home office and why it is important even for SoHo, especially when it comes to modern use cases & scenarios. This is then followed up with a custom router build showcasing off-the-shelf parts that should be accessible to most people. Finally, I cover the installation and configuration of an enterprise-tier network & firewall software → **pfSense**.
 
 ```
-• PROJECT CONTENTS •
+• PROJECT PARTS •
 [1] Network Segmentation
 [2] pfSense Router Build
 [3] VLAN Configuration
