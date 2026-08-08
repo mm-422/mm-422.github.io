@@ -55,13 +55,13 @@ Process Inspection
 • Procmon
 • Spy++
 
-Auxiliary Tools
+Auxiliary
 • HxD for editing hex.
 • PE-bear for quick string searches.
 • Detect-It-Easy for app property inspection.
-
-All testing was performed in a controlled Windows 10 22H2 VM.
 ```
+_All testing performed in a controlled Windows 10 22H2 VM._
+
 ### ♦️ Takeaways
 - Focus should be on understanding the intended design behind an application.
 - Most if not all client-side validation is "doomed" with modern analysis and debugging tools.
@@ -75,44 +75,43 @@ I prefer using a virtual machine for these tasks as they are easy to spool up wi
 
 Below are the environment details along with the specific settings applied.
 
-## The Virtual Machine
+### ♦️ The Virtual Machine
 - Set up Windows 10 22H2 64-bit through VirtualBox version 7.2.4.r170995.
 - Puzzleball 3D was likely designed for Windows XP 32-bit. However, replicating the exact OS env is not necessary for the goals of this project.
-- Allocated 4 logical cores (Zen 3 CPU) and 8GB of memory to Virtual Machine.
-- This was sufficient for up to 3 instances of Ghidra + 1 instance of WinDbg simultaneously.
+- Allocated 4 logical cores (Zen 3 CPU) and 8GB of memory to Virtual Machine. This was sufficient for up to 3 instances of Ghidra + 1 instance of WinDbg simultaneously.
 <img width="1280" height="720" alt="VM DESKTOP" src="https://github.com/user-attachments/assets/78035289-022b-4aff-8589-c7b2672860eb"/>
 
-## Files & File Paths
+### ♦️ Files & File Paths
 - Created a backup of Puzzleball 3D's files on external media.
 - Installed Puzzleball 3D in default directory under "Program Files (x86)".
 - Duplicated Puzzleball 3D's root directory and files to Desktop.
 - All testing and modifications to the app's binaries was performed on the files here.
 
-## OS-level Settings
+### ♦️ OS-level Settings
 - Disabled network connection.
 - Added the "Desktop" directory to Windows Defender's exception list.
 - Left ASLR and default memory integrity settings like Core Isolation alone.
 
-## Tools & Process
+### ♦️ Tools & Process
 Initially, I relied on just x64dbg and PE-bear to do the heavy lifting. But this was only sufficient for some static analysis. Eventually, I moved on to Ghidra + WinDbg as my potent duo, while also discovering plenty of incredible tools like Spy++ and Detect-It-Easy along the way.
 
 I would also be remiss to not mention the incredible use I've found in leveraging LLMs like ChatGPT and Gemini in order to perform tasks such as research for application design philosophies relevant to the early 2000s era as well as sifting through hundreds of lines of assembly code.
 
 Care should be taken when utilizing these technologies, especially when sensitive info is concerned. Considering the fact that Puzzleball 3D is openly available on sites like the Internet Archive with no relevant owners to contact and that hosting a local LLM would present its own set of challenges (cost, speed, reliability), the use of online hosted LLMs is justified in my opinion.
 
-**Static Analysis**
-- PE-bear <sub>v0.7.1</sub>
-- Ghidra <sub>v11.4.2</sub>
+**Static Analysis**<br>
+• PE-bear <sub>v0.7.1</sub><br>
+• Ghidra <sub>v11.4.2</sub>
 
-**Dynamic Analysis**
-- WinDbg <sub>v1.2511.21001.0</sub>
-- x64dbg <sub>v0.0.2.5</sub>
-- Procmon <sub>v4.0.1</sub>
+**Dynamic Analysis**<br>
+• WinDbg <sub>v1.2511.21001.0</sub><br>
+• x64dbg <sub>v0.0.2.5</sub><br>
+• Procmon <sub>v4.0.1</sub>
 
-**Auxiliary**
-- Detect-It-Easy <sub>v3.11</sub>
-- HxD <sub>v2.5.0.0</sub>
-- Spy++ <sub>v18.00.11101</sub>
+**Auxiliary**<br>
+• Detect-It-Easy <sub>v3.11</sub><br>
+• HxD <sub>v2.5.0.0</sub><br>
+• Spy++ <sub>v18.00.11101</sub>
 
 ## Prologue
 ### ♦️ Motivation
@@ -131,7 +130,7 @@ The publisher for Puzzleball 3D ― who also held rights over numerous other tit
 
 However, in 2009, an update to the DLL rendered existing keygens and bypass methods non-functional. Not long after, the publisher also ceased operations, leaving video games like Puzzleball 3D locked in a permanent "free trial" state.
 
-## Initial Assumptions
+### ♦️ Initial Assumptions
 I originally chose Puzzleball 3D for this project with the assumption that its "archaic" activation mechanism would be relatively simple to analyze and even overcome with a "bit flip" or conditional check modification.
 
 I initially approached the problem with techniques and methodology that would've been more suited to modern applications, which while a lot more secure, are also standardized.
