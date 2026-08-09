@@ -5,8 +5,8 @@ categories: [research, reverse engineering]
 tags: [windows, reverse engineering, ghidra]     # TAG names should always be lowercase
 image: "/assets/images/reverse_p3.png"
 ---
-# Part 2 - Tracing User Input
-One crucial step I missed in Part I was to verify if the function, ``unittest_ValidateUnlockCode``, was even a relevant part of Puzzleball 3D's binary used during any actual code validation process ie. _when inputting an unlock code and clicking submit._
+## Tracing User Input
+One crucial step I missed in Part 2 was to verify if the function, ``unittest_ValidateUnlockCode``, was even a relevant part of Puzzleball 3D's binary used during any actual code validation process ie. _when inputting an unlock code and clicking submit._
 
 If we looked closer to examine the name of the function alone, the word "unittest" here is a hint. 
 In software programming, "unit testing" is a method for verifying if individual components of an application are working as expected. In this case, the ``unittest_ValidateUnlockCode`` function block is likely tied to ensuring that user input validation (like an unlock key) executes as expected.
@@ -23,7 +23,7 @@ To do this, I used x64dbg to set a memory breakpoint on ``unittest_ValidateUnloc
 ### ♦️ Hypothesis
 If the memory breakpoint in x64dbg is triggered, then we could revisit the function with a different approach. Otherwise, we would need to trace the user input to the function that **actually performs the activation** or validation step.
 
-## x64dbg Testing
+### ♦️ x64dbg Testing
 Setting a memory breakpoint in x64dbg can be done through the "Symbols" tab. This is where all of the modules (other libraries needed for app's functionality) are listed along with their imported and exported "symbols" which can include variables, data structures, and functions.
 
 <img width="1280" height="720" alt="x64dbg symbols" src="https://github.com/user-attachments/assets/d8a44470-7d96-4bf5-b13d-35d4b1f95dae" />
@@ -48,6 +48,8 @@ Unfortunately, neither of these events occurred and all I got was a pop-up windo
 With this, we can confirm that ``unittest_ValidateUnlockCode`` **is not involved** in the activation process. It could even be vestigial code from early development or debugging that isn't necessarily reflective of the actual math or logic behind the real activation mechanism of Puzzleball 3D.
 
 Now we need to find the actual activation mechanism or function responsible for validating unlock codes.
+
+___
 
 ## Recalibrating
 > GOAL: Locate the routine responsible for activation.
@@ -84,7 +86,7 @@ Developers typically override or customize the ``WNDPROC`` function and its name
 ### ♦️ Hypothesis
 If we could find the exact name of the ``WNDPROC`` implementation in Puzzleball 3D and trace the ``HWND`` of the user input field or ``SUBMIT`` button through the application's binary, we might be able to locate the core activation mechanism.
 
-## Spy++ Testing
+### ♦️ Spy++ Testing
 We can utilize a tool called Microsoft Spy++ to easily uncover the properties of a target window such as the HWND and parent class of a button.
 
 To do this, we simply locate the process with the application's name (Puzzleball 3D in this case) within Spy++ and open the Messages window. Here we can see a long list of events:
@@ -99,7 +101,7 @@ I restarted Puzzleball 3D and performed the same test. The ``HWND`` was now ``00
 
 <img width="1280" height="720" alt="spy++ inspect" src="https://github.com/user-attachments/assets/9fd7f959-e003-465a-b604-ba1f114141fb" />
 
-## Another Curveball
+### ♦️ Another Curveball
 The plan was to locate the specific ``HWND`` tied to either the input field or the ``SUBMIT`` button, and then to trace it to the activation mechanism in Puzzleball 3D's binary by setting a "handle breakpoint" using that ``HWND`` with x64dbg.
 
 As the handle was shared between all elements or "windows" on Puzzleball 3D's launcher, this led to a lot of frustration. Even utilizing the "Handles" feature in x64dbg to set a breakpoint on the specific hardware event listed on the Spy++ Message Window (like ``WM_LBUTTONDOWN``) led to a lot of dead ends. Almost none of the numerous message breakpoints tested were hit.
@@ -114,7 +116,7 @@ After much frustration, I deemed this approach as another "failure" and reconsid
 
 ___
 
-# Part 2 Continued 1
+# Continued 1
 The complications I encountered throughout trying to decode Puzzleball 3D with its relatively opaque routines and unconventional design led me to take a few steps back to re-evaluate my approach.
 
 I decided to pick a simpler part of the application to modify this time in order to **gather more information** on how it responds to analysis and debugging tools. After the previous failures, I wanted to eliminate any possible compatibility issues and ensure there were no "invisible" obfuscation steps that made using tools more challenging than necessary.
@@ -166,9 +168,8 @@ This error indicates a CRC (Cyclic Redundancy Check) failure of some sort, which
 
 I tried following this "CRC failed" string through the XREF shown in Ghidra and landed on the function ``FUN_0040283b``. Attempting any sort of modification to the assembly here, or anywhere for that matter, caused the application to throw another error dialog stating that "Game Files Are Corrupt".
 
-Tracing this new error through the main .EXE brought me to function that seemed to be a common denominator between the two errors ► ``FUN_00401006``
+Tracing this new error through the main .EXE brought me to function that seemed to be a common denominator between the two errors ► ``FUN_00401006``  
 
-#### FUNCTION 00401006
 <img width="1280" height="720" alt="401006 assembly" src="https://github.com/user-attachments/assets/801456be-3a41-4bb9-8dc5-6da7c7403ef9" />
 
 
@@ -176,9 +177,8 @@ In order to understand how Puzzleball 3D was making decisions with regard to whi
 
 Both ``LAB_0040102b`` and ``LAB_00401031`` appeared to load data segments into registers before either returning or jumping to a different section as if "prepping" the application. They are likely responsible for loading resource files like ``Arcade.dat`` and populating internal structures.
 
-The first prominent function call here seems to be ``FUN_00401d0b`` which is part of the routine chain that eventually leads us to the location of the error strings.
+The first prominent function call here seems to be ``FUN_00401d0b`` which is part of the routine chain that eventually leads us to the location of the error strings.  
 
-#### FUNCTION 00401D0B
 ```
 int * __fastcall FUN_00401d0b(int *param_1)
 {
@@ -232,15 +232,14 @@ return param_1;
 }
 ```
 
-The above is the decompiled view of ``FUN_00401D0B`` as presented in Ghidra. Decoding the assembly for this routine was a long and arduos task. So, for the sake of brevity, I will skip the full analysis and list down the most important findings.
+The above is the decompiled view of ``FUN_00401D0B`` as presented in Ghidra. Decoding the assembly for this routine was a long and arduous task. So, for the sake of brevity, I will skip the full analysis and list down the most important findings.
 
 At this point of the project, ``FUN_00401D0B`` seemed like an initializer for integrity checks relating to file corruption. It starts by gathering directory and module names and attempts to locate files\binaries like ``RAW_001.exe`` and ``RAW_002.wdt``, the former being an existing file in the root directory of Puzzleball 3D. Interestingly, ``RAW_002.wdt`` was not a file that existed anywhere on the system (root, Documents, Local App Data, etc.) and may have been a "fall back" for if ``RAW_001.exe`` was not found.
 
 The call to function ``FUN_00401091`` which is found under ``FUN_00401DEB`` is likely what leads to the construction of the "Game Files Are Corrupt" error dialog.
 
-By using x64dbg, I was able to determine that with the current modifications done to Puzzleball 3D's binary, the app took the path towards ``FUN_004027C6`` which is presumed to be a wrapper for the "CRC fail" error. This is our next point of examination.
+By using x64dbg, I was able to determine that with the current modifications done to Puzzleball 3D's binary, the app took the path towards ``FUN_004027C6`` which is presumed to be a wrapper for the "CRC fail" error. This is our next point of examination.  
 
-#### FUNCTION 004027C6
 ```
 **FUN_004027C6**
 undefined4 __thiscall FUN_004027C6 (void * this, LPCSTR param_1)
