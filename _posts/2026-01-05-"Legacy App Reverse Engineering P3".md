@@ -406,7 +406,8 @@ I began by searching both of the binaries for references to ``Arcade.dat`` and `
 String 1 ➜ "The game is looking for some data or a file..."
     • Searching for this in the DLL led us to LAB_004168B3.
     • There is an exact duplicate of this string in the main executable.
-    • Patching JNZ LAB_10082432 => JMP LAB_10082432 under function FUN_10082675 causes the app to crash when "Already Paid" button is pressed to access the launcher's sub-menu.
+    • Patching JNZ LAB_10082432 => JMP LAB_10082432 under function FUN_10082675
+      causes the app to crash when "Already Paid" button is pressed to access the launcher's sub-menu.
     • There is another address in the DLL, 1008267B, where a similar function block can be found.
     • Modifying this DID NOT seem to produce an effect.
 
@@ -419,9 +420,11 @@ String 2 ➜ "Arcade.dat"
 String 3 ➜ "Arcade Main 1024"
     • Searching for this led to LAB_10006A5B which is a block under FUN_1000697E.
     • FUN_1000697E has one parent XREF => radll_EnterMenuSession.
-    • From testing, we know that setting a breakpoint at radll_EnterMenuSession actually triggers when the button to access the launcher sub-menu is clicked.
+    • From testing, we know that setting a breakpoint at radll_EnterMenuSession actually triggers
+      when the button to access the launcher sub-menu is clicked.
     • This is true for both genuine and modified Arcade.dat files.
-    • This is an indicator that the mechanism that does validation for Arcade.dat may be located somewhere in the radll_EnterMenuSession sub-routines.
+    • This is an indicator that the mechanism that does validation for Arcade.dat
+      may be located somewhere in the radll_EnterMenuSession sub-routines.
 ```
 Suffice to say, most of the leads discovered for testing at this phase led to dead ends. Some instruction modifications had no observable effect while others caused Puzzleball 3D to crash on pressing the ``Already Paid`` button.
 
