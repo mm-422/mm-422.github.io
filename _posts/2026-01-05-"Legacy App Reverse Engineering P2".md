@@ -53,21 +53,21 @@ This is why "cracks" back then came with 2 files; a **modified .EXE** executable
 
 In our case, a proprietary DLL file does exist in the root directory of Puzzleball 3D, which we'll refer to as ``RA.dll`` for both the sake of simplicity and obfuscation. The following are strings I found that stuck out the most from each binary:
 
-#### Puzzleball 3D.exe
-- ``radll_HasTheProductBeenPurchased`` @ offset 2aaa0
-- ``unittest_GetBrandedApplicationID`` @ offset 2ab7c
-- ``The DRM dll has been altered since it was generated and is not deemed to be secure`` @ offset 2ac70
-- ``radll_GetUnlockCode`` @ offset 2a514
+**Puzzleball 3D.exe**  
+• ``radll_HasTheProductBeenPurchased`` @ offset 2aaa0  
+• ``unittest_GetBrandedApplicationID`` @ offset 2ab7c  
+• ``The DRM dll has been altered since it was generated and is not deemed to be secure`` @ offset 2ac70  
+• ``radll_GetUnlockCode`` @ offset 2a514  
 
-#### RA.dll
-- ``Decryption Key Data=A/ZTZDGDQ7YGUERNPMP3VVVT4XFWSBBL`` @ offset b8818
-- ``GlobalUnlock`` @ offset c6fde<br>
-- ``radll_GetUnlockCode`` @ offset c7280<br>
-- ``unittest_DecryptUnlockCode`` @ offset c73df<br>
-- ➟ ``unittest_ValidateUnlockCode`` @ offset c7553<br>
-- ``Action Fail Wrong Unlock Code`` @ offset c8660<br>
-- ``Form Edit Control Containing Unlock Code`` @ offset c86f4<br>
-- ``UnlockCode`` @ offset c8728<br>
+**RA.dll**  
+• ``Decryption Key Data=A/ZTZDGDQ7YGUERNPMP3VVVT4XFWSBBL`` @ offset b8818  
+• ``GlobalUnlock`` @ offset c6fde  
+• ``radll_GetUnlockCode`` @ offset c7280  
+• ``unittest_DecryptUnlockCode`` @ offset c73df  
+• ➟ ``unittest_ValidateUnlockCode`` @ offset c7553  
+• ``Action Fail Wrong Unlock Code`` @ offset c8660  
+• ``Form Edit Control Containing Unlock Code`` @ offset c86f4  
+• ``UnlockCode`` @ offset c8728  
 
 Aside from the intriguing "Decryption Key Data" string in the DLL file, there were no hardcoded unlock codes found in either of the examined binaries. More importantly, the 3rd string listed under the main .EXE (@ offset 2ac70) essentially confirms that the copy protection or DRM (Digital Rights Management) is tied to the DLL file.
 
