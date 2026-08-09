@@ -1,5 +1,5 @@
 ---
-title: "Legacy App Reverse Engineering P1 - Introduction & Prologue"
+title: "Puzzleball P1 - Reverse Engineering"
 date: 2026-01-05 00:00:00 +/-TTTT
 categories: [research, reverse engineering]
 tags: [windows, reverse engineering, ghidra]     # TAG names should always be lowercase
@@ -83,7 +83,8 @@ Below are the environment details along with the specific settings applied.
 - However, replicating the exact OS env is not necessary for the goals of this project.
 - Allocated 4 logical cores (Zen 3 CPU) and 8GB of memory to Virtual Machine.
 - This was sufficient for up to 3 instances of Ghidra + 1 instance of WinDbg simultaneously.
-<img width="1280" height="720" alt="VM DESKTOP" src="https://github.com/user-attachments/assets/78035289-022b-4aff-8589-c7b2672860eb"/>
+
+![VM-specs-scrnshot](/assets/images/specs.avif)
 
 ### ♦️ Files & File Paths
 - Created a backup of Puzzleball 3D's files on external media.
