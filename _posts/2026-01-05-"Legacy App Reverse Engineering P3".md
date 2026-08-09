@@ -360,7 +360,6 @@ For the sake of brevity, I will skip to the exact sub-routine in the main .EXE w
 
 Decoding this required plenty of trial-and-error and "app behavior comparisons" between the original ``ra.dll`` file and a tampered one through extensive use of WinDbg. Below is the breakdown.
 
-#### FUNCTION 004076C1
 <img width="526" height="338" alt="4076c1" src="https://github.com/user-attachments/assets/b0229320-aecd-4269-bcd2-6e8d021e978d" />
 
 ``LAB_004076C1`` is a sub-routine of the parent function, ``FUN_004075C0`` which performs specific checks on different parts of the application. ``LAB_004076C1`` seemed tied to Puzzleball 3D's DRM functionality.
@@ -385,7 +384,7 @@ Fortunately, this patch was sufficient for the application to once again resume 
 
 ___
 
-# Part 2 Continued 2
+## Continued 2
 With the integrity checks for the main executable and the DLL both bypassed, Puzzleball 3D's files should now be free to modify without worry of breaking app functionality. To confirm this, we can revisit the previous attempt to narrow down the source for the ``Fatal Not Found`` error dialog's text elements.
 
 <img width="445" height="446" alt="list sucks" src="https://github.com/user-attachments/assets/bb3eb745-96b8-427f-bb23-20dbb9423acd" />
@@ -428,7 +427,6 @@ Suffice to say, most of the leads discovered for testing at this phase led to de
 
 After much trial and error, I discovered a sub-routine called ``FUN_1007F63F`` in the DLL, which through preliminary observation with WinDbg seemed to perform a "loader" type of functionality for components of Puzzleball 3D like the ``Application.dat``, ``Channel.dat``, and of course, ``Arcade.dat`` resource files that are all found in the root directory.
 
-#### FUNCTION 1007F63F
 <img width="524" height="239" alt="arcadeloader" src="https://github.com/user-attachments/assets/b56e59ff-bb40-4994-8c7d-a59d84e9f62e" />
 
 The above is only a snippet of the function's beginning section. ``FUN_1007F63F`` is massive with numerous branches of sub-routines that loop over each other, where even the decompiled view would likely take up multiple pages worth of space on this repo. 
