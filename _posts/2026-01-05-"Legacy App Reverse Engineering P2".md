@@ -1,5 +1,5 @@
 ---
-title: "Legacy App Reverse Engineering P2 - Activation Mechanism"
+title: "Puzzleball P2 - Activation"
 date: 2026-01-05 00:00:00 +/-TTTT
 categories: [research, reverse engineering]
 tags: [windows, reverse engineering, ghidra]     # TAG names should always be lowercase
@@ -17,27 +17,26 @@ Launching Puzzleball 3D from either double-clicking the main .EXE or quick start
 
 This was likely used for internal troubleshooting or to even help with customer support and does not appear to be relevant to the goal, considering the fact that this is a closed-source application that likely did not have a public repository with other versions made available.<br>
 
-<img width="1280" height="720" alt="Launcher Window fixed" src="https://github.com/user-attachments/assets/878a21c3-5db1-42b9-a150-2aea369bdadf" /><br>
+![main-menu](/assets/images/re/part2/1.avif)<br>
 
 The highlighted text, ``...no additional download required``, indicates that the game install is complete in where all the required assets, data, and features are already present on the system and that the trial mode applies a digital/software lock. This is promising because it means reverse-engineering is feasible.
 
 ### ♦️ Exploring The Menus
-<img width="1280" height="720" alt="buttons" src="https://github.com/user-attachments/assets/6d8004b6-c7a4-4f98-b98b-1fa482416b92" />
-<br>
+![menu-options](/assets/images/re/part2/2.avif)<br>
 
 Clicking on the ``Other Games`` button leads to an insecure and likely expired URL. Since the publisher's site is no longer functional (non-existent backend), exploits like SSRF and IDOR are not possible. They would require explicit permission from the server owners anyway and is something outside the scope of this project. But it is interesting to imagine how "fishing" for unlock codes stored in a database could've been a possibility.<br>
 
-<img width="1280" height="720" alt="insecure site fixed" src="https://github.com/user-attachments/assets/03bcbe02-e329-4e69-875a-2164aeb54daa" /><br>
+![page-not-found](/assets/images/re/part2/3.avif)<br>
 
 Clicking on ``Already Paid`` brings forth a new window into view with 4 separate tabs.
 The text here indicates that an internet connection is required to activate the game or unlock the full version. We could intercept the application's attempt at "calling back to base" and host our own server to spoof the validation process but there is far too little information (protocol, request format, etc.) at this point to go down this route.<br>
 
-<img width="1280" height="720" alt="already paid" src="https://github.com/user-attachments/assets/38ad7676-7886-4643-830f-8528bbc20c33" /><br>
+![purchase-method](/assets/images/re/part2/4.avif)<br>
 
 Clicking on the hyperlink, ``I'm not connected to the internet``, renders a new screen displaying a URL and interestingly, a product code. This code doesn't seem to change with multiple restarts of the application so it is likely tied to some system property or attribute.
 We'll note this down for future reference.<br>
 
-<img width="1280" height="720" alt="not connected" src="https://github.com/user-attachments/assets/09fa4d07-54a2-424c-a656-d6f12651513d" /><br>
+![activate-code](/assets/images/re/part2/5.avif)<br>
 
 Going back to the dead URL, we see that the product code is also exposed as a value for the parameter, ``pid``, which likely stands for product ID. It is difficult to ascertain what ``did`` is, but we'll note down this URL for reference as well.
 
@@ -74,7 +73,7 @@ Aside from the intriguing "Decryption Key Data" string in the DLL file, there we
 While all of these strings looked enticing to follow, for the purposes of this project, ``unittest_ValidateUnlockCode`` seemed like the one closest to our goal of decoding the activation mechanism. Looking this up with Ghidra's search tool led to a function with that exact name.<br>
 
 ### ♦️ Ghidra Findings
-<img width="1280" height="720" alt="validateunlockcode func" src="https://github.com/user-attachments/assets/8036a678-83e4-42d0-aa5e-47b77beeddb4" /><br>
+![ghidra-findings](/assets/images/re/part2/6.avif)<br>
 
 The above is a "Ghidra representation" of the function,  ``unittest_ValidateUnlockCode``, translated from machine code into human-readable form. There are 3 variables being declared:
 - cVar1, a single character data type.
@@ -85,7 +84,7 @@ The routine seems to begin with some processing applied to the supplied argument
 A new value for cVar1 is derived from the processing involving function ``FUN_100180d1`` before being compared against the value ``'\0'`` at the end which is likely a null byte.
 
 To understand this routine better, I switched to the "Function Graph" view for ``unittest_ValidateUnlockCode`` in Ghidra to examine the "assembly logic"<br>
-<img width="720" height="1280" alt="validateunlockcode assem" src="https://github.com/user-attachments/assets/866262db-c2c9-4190-9a19-ccf73ae941e3" /><br>
+![unittest-validateunlock](/assets/images/re/part2/7.avif)<br>
 
 Beginning from the top, we see that the ECX register's value is pushed twice onto the stack in place of where the ESP register's value would typically be subtracted to "make space" for local variables. This could just be a form of compiler optimization.
 
@@ -93,7 +92,7 @@ We also see that the function, ``FUN_1007ccbd``, is applied, if you will, in a c
 
 These two functions are likely not where the core logic or math for the activation mechanism is located but I still thought it important to delve deeper into ``FUN_1007ccbd`` in an attempt to fully deconstruct the routine.<br>
 
-<img width="1280" height="720" alt="1007ccbd" src="https://github.com/user-attachments/assets/a4241188-18d7-4a69-8e79-6c54ddc8a0de" />
+![function-1007ccbd](/assets/images/re/part2/8.avif)<br>
 
 Here we see a nested set of blocks that divide the assembly into several sections. Attempting to decode this without any dynamic analysis or runtime context took an immense amount of time and effort.
 
@@ -101,7 +100,7 @@ Suffice to say, this function essentially allocates system memory to load the va
 
 The presence of standard C library functions like ``_strlen``, ``_strncpy``, as well as ``operator_new`` (found within sub-function ``FUN_1007ebe0`` in ``FUN_1007ccbd``) are the biggest giveaways.
 
-<img width="1280" height="720" alt="10018172" src="https://github.com/user-attachments/assets/bdc224dd-b5b4-4ae8-bce3-4e7738de6ff7" />
+![function-10018172](/assets/images/re/part2/9.avif)<br>
 
 Backing out of ``FUN_1007ccbd`` and moving onto ``FUN_10018172``, we see a routine that is even more convoluted. Attempting to decode this with only information and context available through static analysis alone was near impossible, largely due to unknown items like ``DAT_100dc868`` and ``DAT_100dc86c`` as well as the numerous amount of nested functions.
 
