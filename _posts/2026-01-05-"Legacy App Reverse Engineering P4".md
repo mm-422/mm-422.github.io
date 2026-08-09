@@ -8,7 +8,7 @@ image: "/assets/images/reverse_p4.png"
 ## The Story
 In the previous part, we saw how methodology alone could become insufficient when put up against a complex routine with little to no context. What worked well for uncovering the earlier validation mechanisms, became quickly diminished in the face of a relatively opaque function that made even brute-forcing unfeasible.
 
-We should remember that **no tool or technique** in Reverse Engineering is a _one-size-fits-all_ type of solution. They are simply a means to an end, which is to piece together the original developer's intent behind the design of an application.
+We should remember that **no tool or technique** in Reverse Engineering is a one-size-fits-all type of solution. They are simply a means to an end, which is to piece together the original developer's intent behind the design of an application.
 
 This "pieced-together intent" is what I like to call the ``Story``.<br>
 Essentially, this is the expected flow of an application and/or its components from start to end. It is not just about **what** the application does, but **how** it does something.
@@ -258,25 +258,29 @@ With the main goal achieved, I wanted to tie up loose ends by revisiting the "ty
 > GOAL: Fix the typo in Arcade.dat
 
 ## General Anti-Tamper Mechanisms
-In the early 2000s, developers utilized a few common tricks to ensure their data files weren't tampered with. Some of these are as follows:
-- **The Checksum / CRC Trap**<br>
+In the early 2000s, developers utilized a few common tricks to ensure their data files weren't tampered with. Some of these are as follows:  
+**The Checksum / CRC Trap**  
 ```
-- App reads every byte in the data file.
-- Adds them up or runs an algorithm like CRC32.
-- Compares the result to a hardcoded value.
+• App reads every byte in the data file.
+• Adds them up or runs an algorithm like CRC32.
+• Compares the result to a hardcoded value.
 ```
-- **The File Size Trap<br>**
+
+**The File Size Trap**
 ```
-- App asks Windows, "How big is data file X?"
-- If reported size =/= internally expected size, then app assumes the file is corrupt.
-- Ex. Changing "compter" to "computer" in Arcade.dat required adding an extra byte.
+• App asks Windows, "How big is data file X?"
+• If reported size =/= internally expected size,
+  then app assumes the file is corrupt.
+• Ex. Changing "compter" to "computer" in Arcade.dat
+  required adding an extra byte.
 ```
-- **The Offset/Pointer Table Trap**<br>
+
+**The Offset/Pointer Table Trap**
 ```
-- Custom UI files often have a header at the start.
-- This header states the starting point of elements like strings.
-- Modifying the data file by adding an extra byte shifts the entire body forward.
-- This causes a mismatch between the starting point in the header and the body.
+• Custom UI files often have a header at the start.
+• This header states the starting point of elements like strings.
+• Modifying the data file by adding an extra byte shifts the entire body forward.
+• This causes a mismatch between the starting point in the header and the body.
 ```
 
 ### ♦️ Testing Checksum Logic
@@ -306,33 +310,36 @@ Below is the file structure of ``Arcade.dat`` as shown in the Windows command pr
 <img width="412" height="420" alt="arcade files" src="https://github.com/user-attachments/assets/aea4b380-818c-4162-acc6-2190d4995193" />
 
 ### ♦️ The ZIP Archive Structure
-Just like how a website's html code consists of sections like the header, body, and footer, the structure of a ZIP file has the following parts:
-- **Local File Headers**<br>
+Just like how a website's html code consists of sections like the header, body, and footer, the structure of a ZIP file has the following parts:  
+**Local File Headers**
 ```
-- Each file inside the ZIP archive starts with a header.
-- These contain the filename and the compressed/uncompressed size.
-- Easily located in HxD by searching the file's path in the decoded text view column.
+• Each file inside the ZIP archive starts with a header.
+• These contain the filename and the compressed/uncompressed size.
+• Easily located in HxD by searching the file's path in the decoded text view column.
 ```
-- **Payload**<br>
+
+**Payload**
 ```
-- The actual data or "body" of the resource file.
-- Contains items such as text and error strings.
-- Usually not very readable through HxD alone.
+• The actual data or "body" of the resource file.
+• Contains items such as text and error strings.
+• Usually not very readable through HxD alone.
 ```
-- **The Central Directory**<br>
+
+**The Central Directory**
 ```
-- This is located at the end of a ZIP file's binary.
-- It is a "master map" that contains the exact position of every file in the archive.
-- The app looks for files based on the byte offset listed here.
-- This is more efficient than scanning through the entire archive for the desired file.
-- Position is indicated by the byte sequence ``02 01 4b 50`` or PK\x01\x02 in ASCII.
+• This is located at the end of a ZIP file's binary.
+• It is a "master map" that contains the exact position of every file in the archive.
+• The app looks for files based on the byte offset listed here.
+• This is more efficient than scanning through the entire archive for the desired file.
+• Position is indicated by the byte sequence ``02 01 4b 50`` or PK\x01\x02 in ASCII.
 ```
-- **The EOCD**<br>
+
+**The EOCD**
 ```
-- Stands for End of Central Directory.
-- Located at the end of the Central Directory.
-- Contains a byte offset that points to the start of the Central Directory.
-- Indicated by the byte sequence ``50 4B 05 06``.
+• Stands for End of Central Directory.
+• Located at the end of the Central Directory.
+• Contains a byte offset that points to the start of the Central Directory.
+• Indicated by the byte sequence ``50 4B 05 06``.
 ```
 
 ### ♦️ Why Arcade.dat Became Corrupted
@@ -346,7 +353,7 @@ This also tracks with why overwriting a byte instead of adding an extra one ― 
 If we could locate the Central Directory of ``Arcade.dat`` and manually update the byte offsets to account for the extra byte, the application should be able to parse the ZIP file's structure and show us the modified or fixed word on the launcher sub-menu without issues.
 
 ## Testing with HxD
-First, I located the mispelled word in ``Arcade.dat`` through HxD.
+First, I located the misspelled word in ``Arcade.dat`` through HxD.
 
 <img width="621" height="501" alt="compter in HxD" src="https://github.com/user-attachments/assets/e135af04-c136-4009-820a-dd4205417f2f" />
 
@@ -375,16 +382,16 @@ I then went back to the end of the ZIP archive's binary to compare the byte sequ
 
 **Standard EOCD**  
 ```
-- 50 4B 05 06
-- stands for PK\x05\x06
-- PK are the initials for Phil Katz, founder of the ZIP format.
+• 50 4B 05 06
+• stands for PK\x05\x06
+• PK are the initials for Phil Katz, founder of the ZIP format.
 ```
 
 **Byte Sequence in Arcade.dat**  
 ```
-- 52 45 05 06
-- stands for RE\x05\x06
-- Very similar to standard EOCD but has different "initials".
+• 52 45 05 06
+• stands for RE\x05\x06
+• Very similar to standard EOCD but has different "initials".
 ```
 
 Was the application looking for this different byte sequence instead? To confirm this, I searched through the main .EXE in Ghidra for any references to these byte sequences and found the function ``FUN_10083F39`` which is an extremely large routine containing CMP instructions with values like ``0x6054b50``, ``0x4034b50``, ``0x2014b50``, and ``0x6054552``.
