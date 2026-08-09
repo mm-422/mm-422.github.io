@@ -116,7 +116,7 @@ After much frustration, I deemed this approach as another "failure" and reconsid
 
 ___
 
-# Continued 1
+## Continued 1
 The complications I encountered throughout trying to decode Puzzleball 3D with its relatively opaque routines and unconventional design led me to take a few steps back to re-evaluate my approach.
 
 I decided to pick a simpler part of the application to modify this time in order to **gather more information** on how it responds to analysis and debugging tools. After the previous failures, I wanted to eliminate any possible compatibility issues and ensure there were no "invisible" obfuscation steps that made using tools more challenging than necessary.
@@ -318,7 +318,7 @@ This result may be the value that indicates the expected or computed "CRC state"
 ### ♦️ Hypothesis
 Since ``FUN_004027C6`` seems to compute some sort of hash or value based on a "static list" of items and then stores this result in ``EDI+4``, and then in EAX, before it gets passed back to the parent, ``FUN_00401D0B``, theoretically, editing the value of EAX right before the last step, to something matching an original and untampered version of the main executable, should allow us to bypass the "Game File Are Corrupt" check.
 
-## WinDbg Testing
+### ♦️ WinDbg Testing
 I first needed to observe the expected value in the EAX register at the right moment. To do this, I set a memory breakpoint at address ``00402826``, which was the start of ``FUN_00402834`` (called under ``LAB_0049281B`` as can be seen above) through WinDbg with the command ► ``bp 00402826``
 
 The value contained in the EAX register at this moment was ``5C1D48A2``. I noted this down and relaunched Puzzleball 3D, this time with the "modified" version of the executable that threw out the CRC errors.
@@ -332,11 +332,11 @@ This then returned the expected value in EAX right before the call to function `
 
 After performing this modification, the application launched normally through the modified main .EXE and we are now free to make alterations to that executable without tripping any integrity checks. It was now time to check the launcher's sub-menu again and examine the typo.
 
-## Back On Track
+### ♦️ Back On Track
 With the CRC and "corruption" checks neutered, we could now load the version of Puzzleball 3D's executable with the edited strings to see if the "Fatal Not Found" error dialog reflected anything different.
 <img width="711" height="470" alt="same error" src="https://github.com/user-attachments/assets/83ebc6f6-2742-433d-aeec-99ca69fffdfe" />
 
-Unfortunately, the error dialog seems unchanged. Modifying any of the string elements here that are found in the main .EXE doesn't break the application now but the changes don't seem to be reflected for some reason. I tried restarting the VM in order to eliminate any possibility of the app or OS maintaing a cache for the launcher's elements but this did not change the result either.
+Unfortunately, the error dialog seems unchanged. Modifying any of the string elements here that are found in the main .EXE doesn't break the application now but the changes don't seem to be reflected for some reason. I tried restarting the VM in order to eliminate any possibility of the app or OS maintaining a cache for the launcher's elements but this did not change the result either.
 
 There was only one possibility I could think of for this scenario ► Puzzleball 3D was drawing the text elements from another source. The DLL file,``ra.dll``, was the next likely culprit. It contained an exact copy of all the strings found in the error in almost the exact order in its binary.
 
@@ -364,14 +364,14 @@ Decoding this required plenty of trial-and-error and "app behavior comparisons" 
 
 ``LAB_004076C1`` is a sub-routine of the parent function, ``FUN_004075C0`` which performs specific checks on different parts of the application. ``LAB_004076C1`` seemed tied to Puzzleball 3D's DRM functionality.
 
-Examining the first function call here to ``FUN_00407160``, I discovered that it invoked modules such as ``CryptImportKey``, ``CryptHashData``, and ``MS Base Cryptographic Provider v1.0`` which are all cryptography related functions. This was a telling sign that ``FUN_004076C1`` was indeed responsible for verifying the intgrity of the DLL.
+Examining the first function call here to ``FUN_00407160``, I discovered that it invoked modules such as ``CryptImportKey``, ``CryptHashData``, and ``MS Base Cryptographic Provider v1.0`` which are all cryptography related functions. This was a telling sign that ``FUN_004076C1`` was indeed responsible for verifying the integrity of the DLL.
 
-Delving into the process of attempting to crack the above hashing algorithms may have been an even more daunting task. But if we look closer at the above sub-rountine, we can see that there is a TEST intruction right before a jump or JNZ, and critically, a call to the ``Kernel32.dll`` module for the FreeLibrary function. This likely meant that the call to ``FUN_00407160`` with all its crypto-related modules only served to perform hash and signature related functions on ``ra.dll`` and the process of rejecting or unloading the actual DLL was performed farther down the assembly.
+Delving into the process of attempting to crack the above hashing algorithms may have been an even more daunting task. But if we look closer at the above sub-routine, we can see that there is a TEST instruction right before a jump or JNZ, and critically, a call to the ``Kernel32.dll`` module for the FreeLibrary function. This likely meant that the call to ``FUN_00407160`` with all its crypto-related modules only served to perform hash and signature related functions on ``ra.dll`` and the process of rejecting or unloading the actual DLL was performed farther down the assembly.
 
 ### ♦️ Hypothesis
 <img width="1280" height="720" alt="patching JNZ" src="https://github.com/user-attachments/assets/8d061906-e3c0-4ede-be42-6d94d3a62325" />
 
-Patching the assembly here to return an expected non-zero value right before the JNZ instruction might be sufficient. This might force the application's flow to "escape" the following lines of assembly in this sub-routine that unload the DLL and move to contruct the error message found in the log file.
+Patching the assembly here to return an expected non-zero value right before the JNZ instruction might be sufficient. This might force the application's flow to "escape" the following lines of assembly in this sub-routine that unload the DLL and move to construct the error message found in the log file.
 
 ## Register Injection with WinDbg
 I first set a memory breakpoint at the address ``004076d0`` which was right before the ``TEST EAX,EAX`` instruction. I then performed a "live register injection" by passing the following command into WinDbg ► ``r eax=1``
