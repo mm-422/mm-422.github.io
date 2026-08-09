@@ -1,5 +1,5 @@
 ---
-title: "Legacy App Reverse Engineering P4 - Deciphering The Story"
+title: "Puzzleball P4 - The Story"
 date: 2026-01-05 00:00:00 +/-TTTT
 categories: [research, reverse engineering]
 tags: [windows, reverse engineering, ghidra]     # TAG names should always be lowercase
@@ -56,7 +56,7 @@ Instead of the DLL simply constructing and reporting the output at the end, it w
 
 Let's say the result after processing an unlock code is ``Unrecognized Code`` instead of ``Wrong Code`` ― both being different but essentially meaning "invalid code" ― which carries a specific internal ID of ``101``. This ID will then be passed from the DLL, through possibly another "bridge", over to the function responsible for constructing a message tied to that ID.
 
-<img width="1280" height="720" alt="Unrecognized Code" src="https://github.com/user-attachments/assets/0f9be2cf-25a7-44e6-80b1-912e667e462b" />
+![purchase-method](/assets/images/re/part4/1.avif)
 
 A quick sift through the ``Arcade.dat`` file with Notepad again, revealed that most if not all of the text found on this part of Puzzleball 3D's launcher ― like the word "compter" and "Unrecognized Unlock Code" ― is pulled from that specific resource file.
 
@@ -89,7 +89,7 @@ It is important to note that an application's ``Librarian`` is usually responsib
 
 Below is what the call stack in WinDbg looked like after the breakpoint on ``ReadFile`` was hit:
 
-<img width="697" height="317" alt="librarian" src="https://github.com/user-attachments/assets/370d4fe7-d608-4563-9fe8-d6c57529dfc6" />
+![locating-librarian](/assets/images/re/part4/2.avif)
 
 It was still unclear which exact routine was the "core" ``Librarian`` and which ones were simply child functions. This is why I placed temporary labels on the image in order to use as a reference later on.
 
@@ -97,15 +97,15 @@ Since Puzzleball 3D relies on more than one external file ― like ``RAW_003.wdt
 
 To do this, I set Procmon up with the following filters in addition to the defaults:
 
-<img width="1027" height="757" alt="procmon filters" src="https://github.com/user-attachments/assets/50c5c570-6318-4c38-9a06-c7d7641d7095" />
+![procmon](/assets/images/re/part4/3.avif)
 
 I then "stepped the execution forward" in WinDbg while monitoring the Procmon window for events.
 
-<img width="990" height="722" alt="procmon readfile" src="https://github.com/user-attachments/assets/5bc3337d-f5b1-4065-93e5-5d8141360904" />
+![puzzleball-load-procmon](/assets/images/re/part4/4.avif)
 
 Upon repeated tests with the same breakpoint location as above, ``Arcade.dat`` is confirmed to load on the fourth ``ReadFile`` operation each and every time. Checking the call stack in WinDbg now shows us the exact stack structure that we should investigate:
 
-<img width="697" height="317" alt="readfile exact" src="https://github.com/user-attachments/assets/993644e0-97ed-4df4-bc7f-429cfaaffb87" />
+![windbg-stack](/assets/images/re/part4/5.avif)
 
 Using that as context to perform "tracing work", I was able to establish the overall flow of the application ― from the first routine that runs after clicking the ``SUBMIT`` button, to the moment the error string is "read" from ``Arcade.dat`` with ``ReadFile`` ― as follows:
 ```
@@ -170,17 +170,17 @@ The second method actually has a prerequisite in that we need the application to
 This is where the earlier unit testing function, ``unittest_ValidateUnlockCode`` comes in.
 In Part I, we confirmed that this function is never ran through or utilized by Puzzleball 3D during normal operation. But function blocks for unit testing often take a similar form to the "real" routine that is actively used.
 
-<img width="1280" height="722" alt="the 2 functions" src="https://github.com/user-attachments/assets/c9265719-2080-4e0d-bb19-d4a47d498de3" />
+![unittest-functions](/assets/images/re/part4/6.avif)
 
 We know that the functions, ``FUN_10018172`` and ``FUN_100180d1`` in ``unittest_ValidateUnlockCode``, likely perform some form of processing on an input in order to validate it. These are functions that serve a specific purpose and are likely only found in one other routine if any.
 
 I searched for references to these functions and was able to find a parent routine in ``ra.dll`` called ``FUN_1000B555`` that contained calls to both of these functions.
 
-<img width="1218" height="627" alt="1000b555 assembly" src="https://github.com/user-attachments/assets/74b1192a-1c82-46cf-bbb2-13a7f4ad8022" />
+![function-1000b555](/assets/images/re/part4/7.avif)
 
 After setting a breakpoint at the beginning of ``FUN_1000B555``, I launched Puzzleball 3D again through WinDbg and attempted to go through the activation process. Fortunately, clicking on the ``SUBMIT`` button now causes the application to freeze, indicating that the breakpoint was indeed hit in WinDbg.
 
-<img width="1259" height="720" alt="windbg bp" src="https://github.com/user-attachments/assets/5cd09570-293a-4272-a31d-16c413079e8b" />
+![windbg-breakpoint](/assets/images/re/part4/8.avif)
 
 ### ♦️ Hypothesis
 Now that we have a reliable breakpoint to use for "freezing" the application right at the start of what is likely the activation/validation routine, we can most likely work our way to the ``Judge`` with some help from WinDbg.
@@ -190,24 +190,24 @@ If we carry out the testing outlined in ``Option 2`` and find any overlap in fun
 ## Option 2 Test with WinDbg
 First, we set a breakpoint on ``FUN_1000B555``. This should cause the application to "freeze" when we click the ``SUBMIT`` button after entering an unlock code as demonstrated previously.
 
-<img width="716" height="137" alt="CAKE input" src="https://github.com/user-attachments/assets/fb3889cc-4dfd-4049-aacc-4f0cb7015f3b" />
+![CAKE](/assets/images/re/part4/9.avif)
 
 We then attempt to locate the entered user input by using the command ``s -a 0 1?80000000 "CAKE"``. This command basically searches the entire memory space for the ASCII string "CAKE", which is a word I decided to use to prevent the possibility of finding similar but unrelated strings.
 
-<img width="615" height="219" alt="cake windbg" src="https://github.com/user-attachments/assets/24e4b9e0-db08-4347-891b-cce54937d66f" />
+![registers](/assets/images/re/part4/10.avif)
 
 We then set hardware breakpoints on all the memory addresses found where the user input resides and/or has been copied to. In this case, it was addresses, ``0248b081``, ``051e66d1``, and ``0520aac1``.
 
 After that, simply step forward in WinDbg to see which breakpoint gets hit and look at the call stack; paying special attention to the return address column.
 
-<img width="528" height="423" alt="call stack overlap" src="https://github.com/user-attachments/assets/a6f82028-f87f-4d92-8fcc-2cfb79a48288" />
+![stack-state](/assets/images/re/part4/11.avif)
 
 The return address for the item on top of the stack is ``1000B565`` which is actually located in ``FUN_1000B555``. This is the overlap we are looking for.
 
 The likelihood of us being inside the right chain of routines is made even greater when we look at the second item on the call stack ➜ address ``10002915``.
 This is located in ``FUN_1000286C``, the parent function of ``FUN_1000B555``, and is right where the ``TEST AL,AL`` instruction is.
 
-<img width="933" height="137" alt="290c" src="https://github.com/user-attachments/assets/2c8ed547-cb98-4139-9553-e55a16b30bbe" />
+![function-1000290c](/assets/images/re/part4/12.avif)
 
 The TEST instruction placed right after the call to ``FUN_1000B555`` indicates that the result from this operation might act as a "flag setter" for the application to decide if it should take the JZ path to ``LAB_10002969``.
 
@@ -215,7 +215,7 @@ That sub-routine could possibly lead to error type categorization and/or error d
 
 This can be done by simply setting a breakpoint at the last line in ``FUN_1000B555`` which is the RET instruction, and then proceeding through the activation process again.
 
-<img width="969" height="266" alt="registers" src="https://github.com/user-attachments/assets/e26c9800-54a4-460f-a476-923aa186e089" />
+![register-contents](/assets/images/re/part4/13.avif)
 
 The above is a screenshot of the register values and flag status as displayed in WinDbg. We can see that the AL portion of EAX is filled with ``00``. This indicates there is an expected value for the AL register which will correlate with the validity of the unlock code supplied by the user.
 
@@ -226,7 +226,7 @@ This means that the application's flow takes the path towards the ``LAB_10002969
 ### ♦️ The Judge
 From the previous call stack, going further upstream from ``FUN_1000286C`` is not possible with static analysis alone. This is because there is only one XREF point for this function and it is a memory address. Any part of the program can point to this address dynamically during runtime.
 
-<img width="639" height="180" alt="xref286c" src="https://github.com/user-attachments/assets/88c7a3a9-9c00-4ada-9bcc-cfd02d60a823" />
+![function-1000286c](/assets/images/re/part4/14.avif)
 
 With this, we can ascertain that ``FUN_100286C`` is an isolated or "modularized" routine that is called upon by some part of the main application through a pointer in memory to execute specific operations like verifying unlock codes and initiating error dialog construction.
 
@@ -242,11 +242,11 @@ r <flag alias> = <0 to clear, 1 to set>
 ```
 We can quickly test to see if this method would work for bypassing the activation mechanism by setting a breakpoint right at the ``TEST AL,AL`` instruction in ``LAB_1000290C``, going through the activation process in Puzzleball 3D's launcher menu, and then flipping the flag before stepping forward.
 
-<img width="626" height="99" alt="zflag" src="https://github.com/user-attachments/assets/48d19567-a2b9-40f6-96bb-a658e7303a41" />
+![flag-flip](/assets/images/re/part4/15.avif)
 
 Success!
 
-<img width="600" height="81" alt="success" src="https://github.com/user-attachments/assets/b2fecb14-f1fa-41e5-863f-8a06c21a2bea" />
+![success](/assets/images/re/part4/16.avif)
 
 A permanent patch is trivial to create at this point and simply involves modifying the assembly instructions within ``FUN_1000B555`` to ensure that the AL register contains a non-zero value (1) right before the TEST instruction in ``LAB_1000290C``.
 
@@ -292,14 +292,14 @@ If the app works as expected then we are likely not dealing with a checksum or C
 
 Below is a snippet of documentation from the preliminary tests performed on ``Arcade.dat``.
 
-<img width="814" height="241" alt="crc test" src="https://github.com/user-attachments/assets/cb0d0c9a-1106-498c-a3a9-21e42c7d198d" />
+![doc-snippet](/assets/images/re/part4/17.avif)
 
 ## Magic Bytes & Headers
 Earlier in the project, I mentioned performing a quick edit to the "compter" typo in ``Arcade.dat`` using Notepad, a simple text editor. This was of course not ideal as corruption can occur from improperly modifying the contents of a file without first establishing its structure and format.
 
 There are other ways to verify a file's type aside from examining the extension which can be arbitrarily set. With a more appropriate tool like HxD (hex editor), we can quickly view the first few bytes of resource files like ``Arcade.dat`` to uncover important clues.
 
-<img width="1249" height="377" alt="magicbytes" src="https://github.com/user-attachments/assets/7be9d7b1-fd63-4371-958f-cbc95a316a7c" />
+![hxd-scrnshot](/assets/images/re/part4/18.avif)
 
 The first four bytes, ``50 4B 03 04`` are the magic bytes for a ZIP archive and this makes sense considering the type of application we are working with.
 
@@ -307,7 +307,7 @@ It was incredibly common for developers in the early 2000s to bundle resources a
 
 Below is the file structure of ``Arcade.dat`` as shown in the Windows command prompt after decompression.
 
-<img width="412" height="420" alt="arcade files" src="https://github.com/user-attachments/assets/aea4b380-818c-4162-acc6-2190d4995193" />
+![file-path](/assets/images/re/part4/19.avif)
 
 ### ♦️ The ZIP Archive Structure
 Just like how a website's html code consists of sections like the header, body, and footer, the structure of a ZIP file has the following parts:  
@@ -355,18 +355,18 @@ If we could locate the Central Directory of ``Arcade.dat`` and manually update t
 ## Testing with HxD
 First, I located the misspelled word in ``Arcade.dat`` through HxD.
 
-<img width="621" height="501" alt="compter in HxD" src="https://github.com/user-attachments/assets/e135af04-c136-4009-820a-dd4205417f2f" />
+![hxd-compter-string](/assets/images/re/part4/20.avif)
 
 I then added the missing byte or vowel and then moved to locate the EOCD in order to start manually updating the byte offsets. However, I encountered a problem at this step.
 
-<img width="623" height="123" alt="eocd missing" src="https://github.com/user-attachments/assets/1f399263-fd8b-4fd6-8251-1eaa5f45dec3" />
+![eocd](/assets/images/re/part4/21.avif)
 
 The expected sequence for the EOCD, ``50 4B 05 06``, is not present here. The closest set of bytes is ``52 45 05 06`` but this is not a standard indicator for any part of a ZIP file's structure.
 
 How was the application able to parse through the ZIP archive without an EOCD?<br>
 To uncover this bit of critical information, I relied on Procmon once again to observe the loading behavior for ``Arcade.dat``.
 
-<img width="819" height="343" alt="procmon offset comparison" src="https://github.com/user-attachments/assets/39d2f8ae-929f-4501-bc0e-22db1525ec54" />
+![arcade-dat-load-order](/assets/images/re/part4/22.avif)
 
 It should be noted that the sequence for the ReadFile operations were exactly the same from run to run when launching Puzzleball 3D with the original ``Arcade.dat`` file.
 
@@ -396,7 +396,7 @@ I then went back to the end of the ZIP archive's binary to compare the byte sequ
 
 Was the application looking for this different byte sequence instead? To confirm this, I searched through the main .EXE in Ghidra for any references to these byte sequences and found the function ``FUN_10083F39`` which is an extremely large routine containing CMP instructions with values like ``0x6054b50``, ``0x4034b50``, ``0x2014b50``, and ``0x6054552``.
 
-<img width="729" height="290" alt="zip function" src="https://github.com/user-attachments/assets/f36abdf1-469b-4f17-b03b-4da2af5a0611" />
+![ghidra-scrnshot](/assets/images/re/part4/23.avif)
 
 Considering that in 32-bit assembly, bytes are stored in reverse order, ``0x6054b50`` translates to ``50 4b 05 06``. This is "PK\x05\x06" in ASCII, which is the byte sequence for the EOCD or End of Central Directory section in a ZIP file's structure.
 
@@ -404,7 +404,7 @@ The standard EOCD byte sequence was not found in ``Arcade.dat``, probably becaus
 
 Therefore, to allow the application to read the file properly, we need to revisit the ZIP binary in HxD and make extra modifications.
 
-<img width="635" height="95" alt="eocd pointer" src="https://github.com/user-attachments/assets/2767d23f-7226-4802-bf3e-c421a8f19f9a" />
+![eocd-mod](/assets/images/re/part4/24.avif)
 
 There is an extra set of bytes at the end which don't seem to match any standard indicator. Converting this to decimal gives us the value 496265 which aligns with the start of the header of the first file read by the main application. This obviously must be shifted forward by an extra byte in order to fix the starting pointer.
 
@@ -412,7 +412,7 @@ Changing this to ``8a 92 07 00`` which translates to 496266, and then patching t
 
 We can now observe the fixed typo in the sub-menu.
 
-<img width="655" height="155" alt="finalmsg" src="https://github.com/user-attachments/assets/6e36c6cd-21ff-45d3-9a5c-dba853981f1c" />
+![fixed-typo](/assets/images/re/part4/25.avif)
 
 ___
 
