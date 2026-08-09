@@ -5,7 +5,7 @@ categories: [research, reverse engineering]
 tags: [windows, reverse engineering, ghidra]     # TAG names should always be lowercase
 image: "/assets/images/reverse_p4.png"
 ---
-# Part 3 - The Story
+## The Story
 In the previous part, we saw how methodology alone could become insufficient when put up against a complex routine with little to no context. What worked well for uncovering the earlier validation mechanisms, became quickly diminished in the face of a relatively opaque function that made even brute-forcing unfeasible.
 
 We should remember that **no tool or technique** in Reverse Engineering is a _one-size-fits-all_ type of solution. They are simply a means to an end, which is to piece together the original developer's intent behind the design of an application.
@@ -126,7 +126,7 @@ With this critical bit of context established, we can now go back to locating th
 
 ___
 
-# Part 3 Continued 1
+## Continued 1
 > GOAL: Locate the Judge.
 
 As a quick reminder, the ``Judge`` will be a routine in the program that:
@@ -252,7 +252,7 @@ A permanent patch is trivial to create at this point and simply involves modifyi
 
 ___
 
-# Part 3 Continued 2
+## Continued 2
 With the main goal achieved, I wanted to tie up loose ends by revisiting the "typo problem" to see if a refreshed approach could get me to a working solution this time. Just like with decoding the activation mechanism, I focused on gaining good understanding of the application's behavior with context from historical research first before applying any techniques and methodology.
 
 > GOAL: Fix the typo in Arcade.dat
@@ -373,14 +373,14 @@ This indicates that the application cannot parse ``Arcade.dat`` properly and thi
 
 I then went back to the end of the ZIP archive's binary to compare the byte sequence found earlier to what an expected EOCD should be.
 
-#### **Standard EOCD**
+**Standard EOCD**  
 ```
 - 50 4B 05 06
 - stands for PK\x05\x06
 - PK are the initials for Phil Katz, founder of the ZIP format.
 ```
 
-#### **Byte Sequence in Arcade.dat**
+**Byte Sequence in Arcade.dat**  
 ```
 - 52 45 05 06
 - stands for RE\x05\x06
@@ -409,7 +409,7 @@ We can now observe the fixed typo in the sub-menu.
 
 ___
 
-# Project Summary
+## Project Summary
 ```
 Tools and techniques are only means to an end,
   Understanding the intent behind an application's design is the ultimate goal.
