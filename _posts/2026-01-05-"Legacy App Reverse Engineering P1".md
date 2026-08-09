@@ -84,7 +84,7 @@ Below are the environment details along with the specific settings applied.
 - Allocated 4 logical cores (Zen 3 CPU) and 8GB of memory to Virtual Machine.
 - This was sufficient for up to 3 instances of Ghidra + 1 instance of WinDbg simultaneously.
 
-![img-description](/assets/images/specs.avif)
+![VM-specs-scrnshot](/assets/images/re/part1/specs.avif)
 
 ### ♦️ Files & File Paths
 - Created a backup of Puzzleball 3D's files on external media.
