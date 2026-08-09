@@ -85,7 +85,7 @@ SPECS SHEET
 [+] Network Card: HP 332T powered by Broadcom BCM5720
 ```
 
-![img-description](/assets/images/router build.png)
+![img-description](/assets/images/router-build.avif)
 _Parts used for the build. Was running real low on thermal paste._
 
 ### ♦️ Software & pfSense
