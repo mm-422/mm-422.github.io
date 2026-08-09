@@ -1,5 +1,5 @@
 ---
-title: "Legacy App Reverse Engineering P3 - Decoding User Input"
+title: "Puzzleball P3 - Arcade.dat"
 date: 2026-01-05 00:00:00 +/-TTTT
 categories: [research, reverse engineering]
 tags: [windows, reverse engineering, ghidra]     # TAG names should always be lowercase
@@ -26,7 +26,7 @@ If the memory breakpoint in x64dbg is triggered, then we could revisit the funct
 ### ♦️ x64dbg Testing
 Setting a memory breakpoint in x64dbg can be done through the "Symbols" tab. This is where all of the modules (other libraries needed for app's functionality) are listed along with their imported and exported "symbols" which can include variables, data structures, and functions.
 
-<img width="1280" height="720" alt="x64dbg symbols" src="https://github.com/user-attachments/assets/d8a44470-7d96-4bf5-b13d-35d4b1f95dae" />
+![x64dbg-scrnshot](/assets/images/re/part3/1.avif)
 
 As we've established earlier, ``ra.dll`` is the binary where the protection mechanism is likely located and is where the ``unittest_ValidateUnlockCode`` function is found under the Symbols tab as expected. 
 To set a breakpoint here, we simply right click on the target function and select "Toggle Breakpoint" or press the F2 shortcut key.
@@ -35,7 +35,7 @@ This breakpoint will then be listed under the "Breakpoints" tab in x64dbg with a
 
 Now, all that's left to do is to carry out a test to see if the hypothesis is true or false. I navigated to the sub-menu shown previously past the ``Already Paid`` button, then clicked on the hyperlink to bring me back to the window where the product key was displayed along with an input field for an unlock code.
 
-<img width="1280" height="720" alt="not connected" src="https://github.com/user-attachments/assets/3679889d-e5f6-488c-bb22-a96da99c0c9a" />
+![product-key](/assets/images/re/part3/2.avif)
 
 I entered a random string of characters (234A) and then clicked the ``SUBMIT`` button. If the ``unittest_ValidateUnlockCode`` function was indeed tied to the activation mechanism here, then the  breakpoint set in x64dbg should have been hit and the hit counter increased by 1.
 
@@ -43,7 +43,7 @@ It is also typical for the application being debugged to appear "frozen" or "hal
 
 Unfortunately, neither of these events occurred and all I got was a pop-up window telling me that I've entered an "unrecognized unlock code".
 
-<img width="1280" height="720" alt="Unrecognized Code" src="https://github.com/user-attachments/assets/600f91fa-bf4d-460c-a0c8-37288203732d" />
+![product-key-unrecognized](/assets/images/re/part3/3.avif)
 
 With this, we can confirm that ``unittest_ValidateUnlockCode`` **is not involved** in the activation process. It could even be vestigial code from early development or debugging that isn't necessarily reflective of the actual math or logic behind the real activation mechanism of Puzzleball 3D.
 
@@ -91,7 +91,7 @@ We can utilize a tool called Microsoft Spy++ to easily uncover the properties of
 
 To do this, we simply locate the process with the application's name (Puzzleball 3D in this case) within Spy++ and open the Messages window. Here we can see a long list of events:
 
-<img width="1280" height="720" alt="spy++ test" src="https://github.com/user-attachments/assets/6d628381-0d40-4285-8b08-e319187d8f7d" />
+![mouse-msg](/assets/images/re/part3/4.avif)
 
 We then perform an interaction with the app - _like clicking a button_ - and then locate the corresponding event from the list. Puzzleball 3D's launcher also seems to run a continuous "hit test" as can be seen with the numerous ``WM_NCHITTEST`` messages. I didn't think too much of this at the time but the reason will become apparent in a later part.
 
@@ -99,7 +99,7 @@ Anyway, the ``HWND`` has been identified as ``00080428``. However, pointing or c
 
 I restarted Puzzleball 3D and performed the same test. The ``HWND`` was now ``007303BA``. It seemed that the handle changed with each run but stayed constant for all elements displayed on the launcher window. 
 
-<img width="1280" height="720" alt="spy++ inspect" src="https://github.com/user-attachments/assets/9fd7f959-e003-465a-b604-ba1f114141fb" />
+![spy-plus-plus-scrnshot](/assets/images/re/part3/5.avif)
 
 ### ♦️ Another Curveball
 The plan was to locate the specific ``HWND`` tied to either the input field or the ``SUBMIT`` button, and then to trace it to the activation mechanism in Puzzleball 3D's binary by setting a "handle breakpoint" using that ``HWND`` with x64dbg.
@@ -125,7 +125,7 @@ I decided to pick a simpler part of the application to modify this time in order
 
 To go about this, I wanted to remedy a misspelling of the word "computer" on the launcher window where the product key was displayed.
 
-<img width="631" height="88" alt="typo" src="https://github.com/user-attachments/assets/2dfb1fc2-3a78-4aeb-8225-25d73ff8f6f9" />
+![enter-unlock](/assets/images/re/part3/6.avif)
 
 The word "compter" here is missing a vowel, which means we'd have to add an extra byte somewhere in the program's binary or maybe even an external resource file in order to correct the word.
 
@@ -133,13 +133,13 @@ Performing a quick string search through the main .EXE and even the ``ra.dll`` f
 
 So I looked through the root directory of Puzzleball 3D and came across a file called ``Arcade.dat``. This file was of a non-standard "DAT" type. To quickly inspect its contents, I attempted to open it with **Notepad** which presented what looked like a header with unintelligible characters, followed by readable text. Using the "find" tool, I was able to locate the misspelled word.
 
-<img width="1280" height="720" alt="arcade notepad" src="https://github.com/user-attachments/assets/f6d89b1a-a536-4585-a1af-224681e918f6" />
+![compter-notepad](/assets/images/re/part3/7.avif)
 
 It should be stated here that reading and modifying files with arbitrary extensions using a tool like Notepad is ill advised as it could lead to corruption. I knew even at the time that doing so was less than ideal, but it allowed for quickly sifting through the contents of ``Arcade.dat`` in order to locate the desired word.
 
 Changing the word "compter" to "computer" through Notepad seemed trivial, and the launcher even started up as expected. However, clicking on the ``Already Paid`` button to access the sub-menu where the product key was displayed presented this error:
 
-<img width="1280" height="720" alt="fatal not found" src="https://github.com/user-attachments/assets/c953b7e0-a388-4db8-8891-a6d615f7f5cf" />
+![fatal-error](/assets/images/re/part3/8.avif)
 
 This essentially confirms that some if not all of the elements on the sub-menu draw from the Arcade.dat file. This also adds up with the fact that the contents of that file resemble a framework, perhaps used for constructing the launcher's graphical interface.
 
@@ -154,7 +154,7 @@ At this point in the project, I assumed that a validation mechanism of some sort
 
 I ended up finding a row of defined strings in both binaries that contained all the text shown in the previous error dialog box.
 
-<img width="1280" height="720" alt="fatal not found ghidra" src="https://github.com/user-attachments/assets/97939581-3d13-4f5d-beba-ad7728c41235" />
+![ghidra-strings](/assets/images/re/part3/9.avif)
 
 This was an interesting bit of redundancy. The text duplication could just be residual data that survived post-development, in which case it would be next to meaningless for our goal.
 
@@ -162,7 +162,7 @@ To verify if this was the case, and to see which binary (main .EXE or ``ra.dll``
 
 However, doing this caused Puzzleball 3D to throw the following error message on startup:
 
-<img width="1280" height="720" alt="CRC error" src="https://github.com/user-attachments/assets/da3c25b9-a100-4fd7-bb34-51e73c8526d9" />
+![CRC-error](/assets/images/re/part3/10.avif)
 
 This error indicates a CRC (Cyclic Redundancy Check) failure of some sort, which might point to the existence of a routine in the main .EXE that verifies its integrity.
 
@@ -170,8 +170,7 @@ I tried following this "CRC failed" string through the XREF shown in Ghidra and 
 
 Tracing this new error through the main .EXE brought me to function that seemed to be a common denominator between the two errors ► ``FUN_00401006``  
 
-<img width="1280" height="720" alt="401006 assembly" src="https://github.com/user-attachments/assets/801456be-3a41-4bb9-8dc5-6da7c7403ef9" />
-
+![function-00401006](/assets/images/re/part3/11.avif)
 
 In order to understand how Puzzleball 3D was making decisions with regard to which error dialog to show, I decided to perform a full breakdown of ``FUN_00401006``. The fact that this routine possessed numerous inbound XREFs hinted at it being a global initializer of some sort.
 
@@ -322,7 +321,8 @@ Since ``FUN_004027C6`` seems to compute some sort of hash or value based on a "s
 I first needed to observe the expected value in the EAX register at the right moment. To do this, I set a memory breakpoint at address ``00402826``, which was the start of ``FUN_00402834`` (called under ``LAB_0049281B`` as can be seen above) through WinDbg with the command ► ``bp 00402826``
 
 The value contained in the EAX register at this moment was ``5C1D48A2``. I noted this down and relaunched Puzzleball 3D, this time with the "modified" version of the executable that threw out the CRC errors.
-<img width="780" height="222" alt="EAx mod" src="https://github.com/user-attachments/assets/3dc13070-5d00-40c6-8fd5-fe83df72f6e7" />
+
+![function-00402834](/assets/images/re/part3/12.avif)
 
 I changed the ``MOV EAX, dword ptr [ESP + param_1]`` line to instead move an explicit value (``5C1D48A2``) into the EAX register with the following instruction ► ``MOV EAX,0x5C1D48A2``
 
@@ -334,21 +334,24 @@ After performing this modification, the application launched normally through th
 
 ### ♦️ Back On Track
 With the CRC and "corruption" checks neutered, we could now load the version of Puzzleball 3D's executable with the edited strings to see if the "Fatal Not Found" error dialog reflected anything different.
-<img width="711" height="470" alt="same error" src="https://github.com/user-attachments/assets/83ebc6f6-2742-433d-aeec-99ca69fffdfe" />
+
+![arcade-error-dialog](/assets/images/re/part3/13.avif)
 
 Unfortunately, the error dialog seems unchanged. Modifying any of the string elements here that are found in the main .EXE doesn't break the application now but the changes don't seem to be reflected for some reason. I tried restarting the VM in order to eliminate any possibility of the app or OS maintaining a cache for the launcher's elements but this did not change the result either.
 
 There was only one possibility I could think of for this scenario ► Puzzleball 3D was drawing the text elements from another source. The DLL file,``ra.dll``, was the next likely culprit. It contained an exact copy of all the strings found in the error in almost the exact order in its binary.
 
-<img width="896" height="793" alt="dll fatal not found" src="https://github.com/user-attachments/assets/b6c8e6cb-37cf-45ba-8fb8-f6af92f2dc28" />
+![ghidra-strings-2](/assets/images/re/part3/14.avif)
 
 Modifying the strings here through Ghidra is once again trivial. Simply right-click on the defined string and select "Patch Data", enter the desired set of characters, and then press the "O" key for the shortcut to compile and output the modified DLL.
 
 However, performing this now caused Puzzleball 3D to throw a new error dialog on startup.
-<img width="368" height="129" alt="dll app error" src="https://github.com/user-attachments/assets/fde27c52-dd43-445f-a3e8-892112680302" />
+
+![app-errort](/assets/images/re/part3/15.avif)
 
 The message displayed here is quite generic in that there were no codes or detailed information to go off of. I did however notice a new log file generated in Puzzleball 3D's root directory called ``RA Error.txt`` right after the error above. Opening it to examine the contents revealed the following:
-<img width="1280" height="720" alt="DRM dll altered" src="https://github.com/user-attachments/assets/83965227-c508-494b-b766-cedf586fc681" />
+
+![ra-error-log](/assets/images/re/part3/16.avif)
 
 This essentially confirmed the existence of another "internal check" for the DLL's integrity. I double-confirmed this by restoring the original DLL file, which allowed the app to launch normally again. We now had to neuter this DLL validation mechanism as well before being able to proceed further.
 
@@ -360,7 +363,7 @@ For the sake of brevity, I will skip to the exact sub-routine in the main .EXE w
 
 Decoding this required plenty of trial-and-error and "app behavior comparisons" between the original ``ra.dll`` file and a tampered one through extensive use of WinDbg. Below is the breakdown.
 
-<img width="526" height="338" alt="4076c1" src="https://github.com/user-attachments/assets/b0229320-aecd-4269-bcd2-6e8d021e978d" />
+![assembly-trace](/assets/images/re/part3/17.avif)
 
 ``LAB_004076C1`` is a sub-routine of the parent function, ``FUN_004075C0`` which performs specific checks on different parts of the application. ``LAB_004076C1`` seemed tied to Puzzleball 3D's DRM functionality.
 
@@ -369,7 +372,7 @@ Examining the first function call here to ``FUN_00407160``, I discovered that it
 Delving into the process of attempting to crack the above hashing algorithms may have been an even more daunting task. But if we look closer at the above sub-routine, we can see that there is a TEST instruction right before a jump or JNZ, and critically, a call to the ``Kernel32.dll`` module for the FreeLibrary function. This likely meant that the call to ``FUN_00407160`` with all its crypto-related modules only served to perform hash and signature related functions on ``ra.dll`` and the process of rejecting or unloading the actual DLL was performed farther down the assembly.
 
 ### ♦️ Hypothesis
-<img width="1280" height="720" alt="patching JNZ" src="https://github.com/user-attachments/assets/8d061906-e3c0-4ede-be42-6d94d3a62325" />
+![assembly-patch](/assets/images/re/part3/18.avif)
 
 Patching the assembly here to return an expected non-zero value right before the JNZ instruction might be sufficient. This might force the application's flow to "escape" the following lines of assembly in this sub-routine that unload the DLL and move to construct the error message found in the log file.
 
@@ -387,7 +390,7 @@ ___
 ## Continued 2
 With the integrity checks for the main executable and the DLL both bypassed, Puzzleball 3D's files should now be free to modify without worry of breaking app functionality. To confirm this, we can revisit the previous attempt to narrow down the source for the ``Fatal Not Found`` error dialog's text elements.
 
-<img width="445" height="446" alt="list sucks" src="https://github.com/user-attachments/assets/bb3eb745-96b8-427f-bb23-20dbb9423acd" />
+![dialog-evidence](/assets/images/re/part3/19.avif)
 
 As can be seen above, the change made to the string in Part II is now reflected in the dialog box. This proves that the error message's text is indeed **pulled from the** ``ra.dll`` **binary.**
 
@@ -430,7 +433,7 @@ Suffice to say, most of the leads discovered for testing at this phase led to de
 
 After much trial and error, I discovered a sub-routine called ``FUN_1007F63F`` in the DLL, which through preliminary observation with WinDbg seemed to perform a "loader" type of functionality for components of Puzzleball 3D like the ``Application.dat``, ``Channel.dat``, and of course, ``Arcade.dat`` resource files that are all found in the root directory.
 
-<img width="524" height="239" alt="arcadeloader" src="https://github.com/user-attachments/assets/b56e59ff-bb40-4994-8c7d-a59d84e9f62e" />
+![arcade-loader](/assets/images/re/part3/20.avif)
 
 The above is only a snippet of the function's beginning section. ``FUN_1007F63F`` is massive with numerous branches of sub-routines that loop over each other, where even the decompiled view would likely take up multiple pages worth of space on this repo. 
 
