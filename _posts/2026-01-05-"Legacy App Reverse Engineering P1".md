@@ -144,7 +144,7 @@ I initially approached the problem with techniques and methodology that would've
 
 It was only after repeated failure that I realized the need to reassess my approach. Aside from documentation and symbols being absent, the application reflected design patterns that were specific to its era.
 
-<img width="1280" height="720" alt="HDD vs RAM" src="https://github.com/user-attachments/assets/4b190b31-f82b-4115-a81a-3be3707d1fd9" />
+![HDD-vs-RAM](/assets/images/re/part1/hdd_v_ram.avif)
 
 For example, simple assets for the launcher like text preceding an input field were copied multiple times into memory instead of being "pulled straight from the disk". This may seem inefficient by today's standards but to preserve good user experience, the original developers likely made this tradeoff as hard drives back then were relatively slow.
 
