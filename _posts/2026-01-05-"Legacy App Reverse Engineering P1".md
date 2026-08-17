@@ -5,6 +5,9 @@ categories: [research, reverse engineering]
 tags: [windows, reverse engineering, ghidra]     # TAG names should always be lowercase
 image: "/assets/images/reverse_p1.png"
 ---
+``DOMAIN:`` Pentester | Vulnerability Mgmt<br>
+``EX. SCENARIO:`` Investigating weaknesses in authentication mechanisms of legacy Windows apps that may still be in use in a corporate environment.
+
 
 ## Executive Summary
 This project documents a thorough analysis of an early-2000s era application and its components by way of Reverse Engineering. Aspects such as the authentication mechanism, file integrity checks, UI construction and more are covered.
