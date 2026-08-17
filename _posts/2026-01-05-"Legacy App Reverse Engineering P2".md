@@ -6,7 +6,7 @@ tags: [windows, reverse engineering, ghidra]     # TAG names should always be lo
 image: "/assets/images/reverse_p2.png"
 ---
 ``DOMAIN:`` Pentesting | Vulnerability Mgmt<br>
-``EX. SCENARIO:`` Investigating weaknesses in authentication mechanisms of legacy Windows apps that may still be in use in a corporate environment.
+``REAL-WORLD CONTEXT:`` Investigating weaknesses in authentication mechanisms of legacy Windows apps that may still be in use in a corporate environment.
 
 ___
 
