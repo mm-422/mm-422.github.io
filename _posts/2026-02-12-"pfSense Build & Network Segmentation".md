@@ -5,8 +5,8 @@ categories: [research, networking]
 tags: [pfsense, hardware, router]     # TAG names should always be lowercase
 image: "/assets/images/pfsense_rev.png"
 ---
-``DOMAIN:`` Systems Administration | IT Asset Mgmt <br>
-``EX. SCENARIO:`` Configuring network infrastructure with security in mind and troubleshooting hardware-related issues.
+``DOMAIN:`` Sysadmin | IT Asset Mgmt <br>
+``REAL-WORLD CONTEXT:`` Configuring network infrastructure with security in mind and troubleshooting hardware-related issues.
 
 ___
 
