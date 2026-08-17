@@ -5,6 +5,11 @@ categories: [research, networking]
 tags: [pfsense, hardware, router]     # TAG names should always be lowercase
 image: "/assets/images/pfsense_rev.png"
 ---
+``DOMAIN:`` Systems Administration | IT Asset Mgmt <br>
+``EX. SCENARIO:`` Configuring network infrastructure with security in mind and troubleshooting hardware-related issues.
+
+___
+
 ## Project Overview
 For this venture, I explore what **Network Segmentation** means under the context of small/home office and why it is important even for SoHo, especially when it comes to modern use cases & scenarios. This is then followed up with a custom router build showcasing off-the-shelf parts that should be accessible to most people. Finally, I cover the installation and configuration of an enterprise-tier network & firewall software → **pfSense**.
 
