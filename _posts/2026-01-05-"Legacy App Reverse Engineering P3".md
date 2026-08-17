@@ -5,6 +5,11 @@ categories: [research, reverse engineering]
 tags: [windows, reverse engineering, ghidra]     # TAG names should always be lowercase
 image: "/assets/images/reverse_p3.png"
 ---
+``DOMAIN:`` Pentesting | Vulnerability Mgmt<br>
+``EX. SCENARIO:`` Investigating weaknesses in authentication mechanisms of legacy Windows apps that may still be in use in a corporate environment.
+
+___
+
 ## Tracing User Input
 One crucial step I missed in Part 2 was to verify if the function, ``unittest_ValidateUnlockCode``, was even a relevant part of Puzzleball 3D's binary used during any actual code validation process ie. _when inputting an unlock code and clicking submit._
 
