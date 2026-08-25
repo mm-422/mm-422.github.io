@@ -39,7 +39,6 @@ ___
     - These registers are called Platform Configuration Registers (PCR).
     - Part of the process of "vouching" for a system's trustworthiness involves reporting PCR values.
 
-___
 
 ### ♦️ Objects, Handles, Slots
 - TPMs possess a small amount of persistent memory called NVDATA.
@@ -48,7 +47,6 @@ ___
 - The stored data items themselves are referenced as **objects.**
 - Each object stored in a slot has an address a.k.a. **handle.**
 
-___
 
 ### ♦️ Hierarchies & Key Creation
 - Key generation & signing within TPM is tied to a system of hierarchies.
@@ -72,7 +70,6 @@ ___
     - Reserved for ephemeral keys.
     - Seed is regenerated each time host reboots.
 
-___
 
 ### ♦️ Remote Attestation  
 - This is one of numerous workflows that can be performed by TPM.
@@ -95,17 +92,57 @@ ___
 
 ## Demo & Analysis
 ### ♦️ IBM TPM2 Setup
-- requirements
-- install instructions
-- picture
+**Prerequisites**
+```
+• OpenSSL 3.1 x or newer incl. dev package.
+• CMake or similar build tool.
+• IBM's Software TPM2.0 (via git).
+  LINK: "git clone https://git.code.sf.net/p/ibmswtpm2/tpm2 ibmswtpm2-tpm2"
+```
+**Installation**  
+```
+• Build for Linux will create an executable, "tpm_server".
+• Terminal:
+  $ cd ~/Downloads/ibmswtpm2-tpm2/src
+  $ make
+```
+
+![img-description](/assets/images/ryzen-tpm/TPM.avif)
+_caption_
+
 ### ♦️ IBM TSS Setup
-- requirements
-- install instructions
-- picture
+**Prerequisites**
+```
+• OpenSSL 3.1 x or newer incl. dev package.
+• CMake or similar build tool.
+• IBM's TPM2.0 TSS (via git).
+  LINK: "git clone https://git.code.sf.net/p/ibmtpm20tss/tss ibmtpm20tss-tss"
+```
+**Installation**  
+```
+• Build will create binaries used to communicate with TPM simulator.
+• After building, run the regression test with reg.sh
+• Terminal:
+  $ LD_LIBRARY_PATH=/usr/local
+  $ cd ~/Downloads/ibmtpm20tss-tss/utils
+  $ autoreconf -i
+  $ ./configure --prefix=${HOME}/local --disable-tpm-1.2 --disable-hwtpm
+  $ make clean
+  $ make
+  $ make install
+• Regression test:
+  $ cd ~/Downloads/ibmtpm20tss-tss/utils
+  $ ./reg/sh -a
+```
+
+![img-description](/assets/images/ryzen-tpm/TSS.avif)
+_caption_
+
 ### ♦️ Legitimate Workflow
 - expectation of end result
 - step by step
 - pictures
+
 ### ♦️ The Vulnerability
 - explain where vulnerability is
 - how it happens
