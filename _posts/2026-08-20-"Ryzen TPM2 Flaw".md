@@ -4,6 +4,7 @@ date: 2026-08-20 00:00:00 +/-TTTT
 categories: [research, cryptography]
 tags: [amd, tpm, crypto]     # TAG names should always be lowercase
 image: "/assets/images/ryzen-tpm/ryzen tpm.png"
+mermaid: true
 ---
 ``DOMAIN:`` Sysadmin | Vulnerability Mgmt<br>
 ``CONTEXT:`` The skills, tools, and methodology covered could be seen in system hardening routines, where an in-charge IT personnel would investigate recent security incidents, compile their findings, and then examine dev/prod systems for weaknesses based on the research, before following up with appropriate mitigations e.g. rolling out official patches.  
