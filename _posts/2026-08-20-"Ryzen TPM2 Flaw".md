@@ -6,14 +6,14 @@ tags: [amd, tpm, crypto]     # TAG names should always be lowercase
 image: "/assets/images/ryzen-tpm/ryzen tpm.png"
 ---
 ``DOMAIN:`` Sysadmin | Vulnerability Mgmt<br>
-``CONTEXT:`` The skills, tools, and methodology covered could be seen in a system hardening routine, where an in-charge IT personnel would investigate recent reports of breaches, compile their findings, and then examine dev/prod systems for weaknesses based on the research. They might also follow up with application of appropriate mitigations e.g. rolling out official patches.  
+``CONTEXT:`` The skills, tools, and methodology covered could be seen in system hardening routines, where an in-charge IT personnel would investigate recent security incidents, compile their findings, and then examine dev/prod systems for weaknesses based on the research, before following up with appropriate mitigations e.g. rolling out official patches.  
 
 ___
 
 ## Vulnerability Overview  
 This project explores the recently reported (and patched) vulnerability concerning AMD's implementation of the TPM2 specification (fTPM) in its currently supported processors.  
 
-To summarize, CVE-2026-6726 revolves around a flaw in TPM logic where a "Use-After-Free" scenario is forced (via complex auth sessions, type conversions, etc.). An attacker with local privileged access could trick the TPM into certifying a false or weakly-generated key with a valid Attestation Key (AK), which would allow them to obtain genuine certificates for their forged identity from TPM-aware Certificate Authorities (due to them trusting data rooted in a valid AK).  
+To summarize, CVE-2026-6726 revolves around a flaw in TPM logic where a "Use-After-Free" scenario is forced (via complex auth sessions, type conversions, etc.). An attacker with local privileged access could then trick the TPM into certifying a false or weakly-generated key with a valid Attestation Key (AK). This would allow them to obtain genuine certificates for their forged identity from TPM-aware Certificate Authorities due to them trusting data rooted in valid AKs.
 
 To demonstrate what the "exploit chain" might look like, a TPM Simulator was set up alongside a compatible software stack (TPM tools & libraries) for testing in a controlled environment (Debian VM). This is complemented with a write-up in a later section, showcasing where the vulnerabilities might be rooted and what mitigations are currently available and/or recommended.  
 
@@ -23,20 +23,18 @@ To demonstrate what the "exploit chain" might look like, a TPM Simulator was set
 - Acts as a secure digital vault for encryption keys, passwords, digital certs.
 - Keep security tasks isolated from OS and vulnerable software.
 - Two Primary Functions:
-```
-1. Secure Key Generation
-• TPM is commonly used to generate cryptographic keys securely.
-• Key creation is such that the private half of the key never leaves TPM.
-• TPM can also encrypt, sign, and certify keys.
-• Different types of keys are generated under different hierarchies.
-• Hierarchy is a logical collection of data.
-
-2. System Attestation
-• TPM can be used to capture host system state.
-• This is done by recording the values stored in the TPMs registers.
-• These registers are called Platform Configuration Registers (PCR).
-• Part of the process of "vouching" for a system's trustworthiness involves reporting PCR values.
-```
+  - **Secure Key Generation**
+    - TPM is commonly used to generate cryptographic keys securely.
+    - Key creation is such that the private half of the key never leaves TPM.
+    - TPM can also encrypt, sign, and certify keys.
+    - Different types of keys are generated under different hierarchies.
+    - Hierarchy is a logical collection of data.
+  
+  - **System Attestation**
+    - TPM can be used to capture host system state.
+    - This is done by recording the values stored in the TPMs registers.
+    - These registers are called Platform Configuration Registers (PCR).
+    - Part of the process of "vouching" for a system's trustworthiness involves reporting PCR values.  
 
 ### ♦️ Objects, Handles, Slots
 - TPMs possess a small amount of persistent memory called NVDATA.
@@ -53,13 +51,16 @@ To demonstrate what the "exploit chain" might look like, a TPM Simulator was set
   - **Owner/Storage Hierarchy**
     - The user/owner is responsible for secure key creation.
     - Seed can be reset or cleared when re-installing OS.
+   
   - **Platform Hierarchy**
     - Reserved for objects created and certified by OEM (ASUS, MSI, Dell, etc.).
     - Seed for this hierarchy is generated at manufacturing time.
     - Can be reset by manufacturer.
+  
   - **Endorsement Hierarchy**
     - Reserved for objects created and certified by TPM manufacturer.
-    - Seed is burned in at factory. 
+    - Seed is burned in at factory.
+  
   - **Null Hierarchy**
     - Reserved for ephemeral keys.
     - Seed is regenerated each time host reboots.  
@@ -88,7 +89,10 @@ We will begin with a short guide on setting up the TPM simulator and software st
 
 
 ## Mitigation & Remediation
-AGESA Mitigations rolled out in May.
+As the flaw lies in AMD's proprietary implementation of the TPM2 spec, a BIOS firmware update is required to fully resolve the issue. Updates have been made available via official channels since May 2026, rendering workarounds or temporary fixes unnecessary.  
+
+Download the latest AGESA microcode from the BIOS download/update pages of your specific motherboard vendor. These are the patched versions for each Zen architecture:
+
 ```
 • ComboAM4PI 1.0.0.11 on May 18 for Ryzen 3000.
 • ComboAM4v2PI 1.2.0.12 on May 27 for Ryzen 4000 & 5000.
