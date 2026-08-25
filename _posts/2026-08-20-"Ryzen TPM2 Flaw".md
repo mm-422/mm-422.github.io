@@ -1,12 +1,13 @@
 ---
-title: "Investigating Ryzen TPM2 Flaw with IBM TSS [WIP]"
+title: "Investigating CVE-2026-6726 ft. IBM TSS [WIP]"
 date: 2026-08-20 00:00:00 +/-TTTT
 categories: [research, cryptography]
 tags: [amd, tpm, crypto]     # TAG names should always be lowercase
 image: "/assets/images/ryzen-tpm/ryzen tpm.png"
 ---
 ``DOMAIN:`` Sysadmin | Vulnerability Mgmt<br>
-``REAL-WORLD CONTEXT:`` Investigating reports, compiling findings, and then examining development/production systems for weaknesses based on research. Follow up with application of appropriate mitigations e.g. rolling out official patches.
+``REAL-WORLD CONTEXT:`` Investigating reports, compiling findings, and then examining development/production systems for weaknesses based on research. Follow up with application of appropriate mitigations e.g. rolling out official patches.  
+
 ___
 
 ## Vulnerability Overview  
