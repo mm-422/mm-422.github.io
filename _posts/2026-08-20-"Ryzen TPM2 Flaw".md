@@ -19,13 +19,59 @@ To demonstrate what the "exploit chain" might look like, a TPM Simulator was set
 
 ## Key Concepts  
 ### ♦️ Trusted Platform Module
+- Specialized hardware chip (or integrated processor) on a motherboard.
+- Acts as a secure digital vault for encryption keys, passwords, digital certs.
+- Keep security tasks isolated from OS and vulnerable software.
+- Two Primary Functions:
+```
+1. Secure Key Generation
+• TPM is commonly used to generate cryptographic keys securely.
+• Key creation is such that the private half of the key never leaves TPM.
+• TPM can also encrypt, sign, and certify keys.
+• Different types of keys are generated under different hierarchies.
+• Hierarchy is a logical collection of data.
+
+2. System Attestation
+• TPM can be used to capture host system state.
+• This is done by recording the values stored in the TPMs registers.
+• These registers are called Platform Configuration Registers (PCR).
+• Part of the process of "vouching" for a system's trustworthiness involves reporting PCR values.
+```
+
 ### ♦️ Objects, Handles, Slots
-- Explain TPM transient objects.
-- Volatile RAM slots.
-### ♦️ Workflows
-- Key wrapping.
-### ♦️ Remote Attestation
-- Context save/load mechanics.  
+- TPMs possess a small amount of persistent memory called NVDATA.
+- They also possess spaces in memory for storing data temporarily.
+- These "working memory" spaces are called **slots.**
+- The stored data items themselves are referenced as **objects.**
+- Each object stored in a slot has an address a.k.a. **handle.**  
+
+### ♦️ Hierarchies & Key Creation
+- Key generation & signing within TPM is tied to a system of hierarchies.
+- Each hierarchy begins with a seed, followed by primary/parent key.
+- The primary key is then used to create child keys.
+- Four main hierarchies:
+  - **Owner/Storage Hierarchy**
+    - The user/owner is responsible for secure key creation.
+    - Seed can be reset or cleared when re-installing OS.
+  - **Platform Hierarchy**
+    - Reserved for objects created and certified by OEM (ASUS, MSI, Dell, etc.).
+    - Seed for this hierarchy is generated at manufacturing time.
+    - Can be reset by manufacturer.
+  - **Endorsement Hierarchy**
+    - Reserved for objects created and certified by TPM manufacturer.
+    - Seed is burned in at factory. 
+  - **Null Hierarchy**
+    - Reserved for ephemeral keys.
+    - Seed is regenerated each time host reboots.  
+
+### ♦️ Remote Attestation  
+- This is one of numerous workflows that can be performed by TPM.
+- Involves verifying a system state in order to vouch for its trustworthiness.
+- This enables it to prove its identity to external servers.
+- Begins with creation of Attestation Key, derived from Endorsement Key.
+- The AK is then used to certify (wrap) a key that may be used for encryption/signing.
+- The process of certification generates a cryptographic structure.
+- The client sends this structure and the public component of the wrapped key to the server to be verified.
 
 ## Tools
 ```
@@ -34,10 +80,9 @@ To demonstrate what the "exploit chain" might look like, a TPM Simulator was set
 ```
 
 ## Demo & Analysis
-- Step by step walkthrough.
-- Command logs showing normal context mgmt vs sequence used to trigger context/slot reuse.
-- Observation of anomaly.
-- Terminal side by side or log output showing corrupted slot state or auth bypass  
+We will begin with a short guide on setting up the TPM simulator and software stack required to communicate with it.<br> Note: Different TPM simulators have different dependencies and compatibilities. For this research, the IBM implementation for both the simulator and software stack was used.
+
+
 
 ## Mitigation & Remediation
 AGESA Mitigations rolled out in May.
