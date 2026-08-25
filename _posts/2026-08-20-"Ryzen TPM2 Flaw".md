@@ -81,7 +81,10 @@ To demonstrate what the "exploit chain" might look like, a TPM Simulator was set
 
 ## Demo & Analysis
 We will begin with a short guide on setting up the TPM simulator and software stack required to communicate with it.<br> Note: Different TPM simulators have different dependencies and compatibilities. For this research, the IBM implementation for both the simulator and software stack was used.
-
+### ♦️ IBM TPM2 Setup
+### ♦️ IBM TSS Setup
+### ♦️ Legitimate Remote Attestation Workflow
+### ♦️ Where CVE-2026-6726 Intervenes
 
 
 ## Mitigation & Remediation
