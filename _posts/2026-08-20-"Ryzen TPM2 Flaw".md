@@ -17,6 +17,8 @@ To summarize, CVE-2026-6726 revolves around a flaw in TPM logic where a "Use-Aft
 
 To demonstrate what the "exploit chain" might look like, a TPM Simulator was set up alongside a compatible software stack (TPM tools & libraries) for testing in a controlled environment (Debian VM). This is complemented with a write-up in a later section, showcasing where the vulnerabilities might be rooted and what mitigations are currently available and/or recommended.  
 
+___
+
 ## Key Concepts  
 ### ♦️ Trusted Platform Module
 - Specialized hardware chip (or integrated processor) on a motherboard.
@@ -34,14 +36,18 @@ To demonstrate what the "exploit chain" might look like, a TPM Simulator was set
     - TPM can be used to capture host system state.
     - This is done by recording the values stored in the TPMs registers.
     - These registers are called Platform Configuration Registers (PCR).
-    - Part of the process of "vouching" for a system's trustworthiness involves reporting PCR values.  
+    - Part of the process of "vouching" for a system's trustworthiness involves reporting PCR values.
+
+___
 
 ### ♦️ Objects, Handles, Slots
 - TPMs possess a small amount of persistent memory called NVDATA.
 - They also possess spaces in memory for storing data temporarily.
 - These "working memory" spaces are called **slots.**
 - The stored data items themselves are referenced as **objects.**
-- Each object stored in a slot has an address a.k.a. **handle.**  
+- Each object stored in a slot has an address a.k.a. **handle.**
+
+___
 
 ### ♦️ Hierarchies & Key Creation
 - Key generation & signing within TPM is tied to a system of hierarchies.
@@ -63,7 +69,9 @@ To demonstrate what the "exploit chain" might look like, a TPM Simulator was set
   
   - **Null Hierarchy**
     - Reserved for ephemeral keys.
-    - Seed is regenerated each time host reboots.  
+    - Seed is regenerated each time host reboots.
+
+___
 
 ### ♦️ Remote Attestation  
 - This is one of numerous workflows that can be performed by TPM.
@@ -74,19 +82,34 @@ To demonstrate what the "exploit chain" might look like, a TPM Simulator was set
 - The process of certification generates a cryptographic structure.
 - The client sends this structure and the public component of the wrapped key to the server to be verified.
 
+___
+
 ## Tools
 ```
 • Debian 13.6 via VirtualBox v7.2.12
 • IBM TPM2 Simulator and TSS
 ```
 
-## Demo & Analysis
-We will begin with a short guide on setting up the TPM simulator and software stack required to communicate with it.<br> Note: Different TPM simulators have different dependencies and compatibilities. For this research, the IBM implementation for both the simulator and software stack was used.
-### ♦️ IBM TPM2 Setup
-### ♦️ IBM TSS Setup
-### ♦️ Legitimate Remote Attestation Workflow
-### ♦️ Where CVE-2026-6726 Intervenes
+___
 
+## Demo & Analysis
+### ♦️ IBM TPM2 Setup
+- requirements
+- install instructions
+- picture
+### ♦️ IBM TSS Setup
+- requirements
+- install instructions
+- picture
+### ♦️ Legitimate Workflow
+- expectation of end result
+- step by step
+- pictures
+### ♦️ The Vulnerability
+- explain where vulnerability is
+- how it happens
+
+___
 
 ## Mitigation & Remediation
 As the flaw lies in AMD's proprietary implementation of the TPM2 spec, a BIOS firmware update is required to fully resolve the issue. Updates have been made available via official channels since May 2026, rendering workarounds or temporary fixes unnecessary.  
