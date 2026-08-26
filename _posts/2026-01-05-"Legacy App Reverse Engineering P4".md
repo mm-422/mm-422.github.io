@@ -5,10 +5,6 @@ categories: [research, reverse engineering]
 tags: [windows, reverse engineering, ghidra]     # TAG names should always be lowercase
 image: "/assets/images/reverse_p4.png"
 ---
-``DOMAIN:`` Pentesting | Vulnerability Mgmt<br>
-``REAL-WORLD CONTEXT:`` Investigating weaknesses in authentication mechanisms of legacy Windows apps that may still be in use in a corporate environment.
-
-___
 
 ## The Story
 In the previous part, we saw how methodology alone could become insufficient when put up against a complex routine with little to no context. What worked well for uncovering the earlier validation mechanisms, became quickly diminished in the face of a relatively opaque function that made even brute-forcing unfeasible.
