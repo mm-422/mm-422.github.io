@@ -1,5 +1,5 @@
 ---
-title: "Investigating CVE-2026-6726 ft. IBM TSS [WIP]"
+title: "CVE-2026-6726 Investigation ft. IBM TSS"
 date: 2026-08-20 00:00:00 +/-TTTT
 categories: [research, cryptography]
 tags: [amd, tpm, crypto]     # TAG names should always be lowercase
@@ -87,7 +87,7 @@ ___
 • Debian 13.6 via VirtualBox v7.2.12
 • IBM TPM2 Simulator and TSS
 ```
-![debian](/assets/images/debian-vm.avif)
+![debian](/assets/images/ryzen-tpm/debian-vm.avif)
 _Debian 13.6 running on VirtualBox._
 ___
 
@@ -167,7 +167,7 @@ $ createprimary -hi -e -st
 ```
 _Note: I've added the /utils folder to the Debian system path. This allows me to run the binaries as if they were commands directly from the terminal._  
 
-![tpm-running](/assets/images/tpm-server.avif)
+![tpm-running](/assets/images/ryzen-tpm/tpm-server.avif)
 _TPM Simulator is successfully running in the background._
 
 We can now create new child keys from this hierarchy.  
@@ -194,7 +194,7 @@ We now have both the AK and a sample key loaded into the TPM's memory and can ru
 $ certify -ho 80000002 -hk 80000001 -os sign.data -oa attest.data
 ```
 
-![items-list](/assets/images/ls-la.avif)
+![items-list](/assets/images/ryzen-tpm/ls-la.avif)
 _A list of all the data generated and saved locally._
 
 ### ♦️ The Vulnerability
