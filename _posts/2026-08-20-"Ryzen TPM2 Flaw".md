@@ -88,7 +88,8 @@ ___
 • IBM TPM2 Simulator and TSS
 ```
 ![debian](/assets/images/ryzen-tpm/debian-vm.avif)
-_Debian 13.6 running on VirtualBox._
+_Debian 13.6 running on VirtualBox._  
+
 ___
 
 ## Demo & Analysis
@@ -161,14 +162,16 @@ In order to interact with this "software TPM" and send commands, we launch the d
 ```
 # Initialization Step
 $ startup -v
+```
 
+![tpm-running](/assets/images/ryzen-tpm/tpm-server.avif)
+_TPM Simulator is successfully running in the background._  
+
+```
 # Generating a Key
 $ createprimary -hi -e -st
 ```
 _Note: I've added the /utils folder to the Debian system path. This allows me to run the binaries as if they were commands directly from the terminal._  
-
-![tpm-running](/assets/images/ryzen-tpm/tpm-server.avif)
-_TPM Simulator is successfully running in the background._
 
 We can now create new child keys from this hierarchy.  
 
