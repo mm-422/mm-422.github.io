@@ -6,7 +6,7 @@ tags: [pfsense, hardware, router]     # TAG names should always be lowercase
 image: "/assets/images/pfsense_rev.png"
 ---
 ``DOMAIN:`` Sysadmin | IT Asset Mgmt <br>
-``REAL-WORLD CONTEXT:`` Configuring network infrastructure with security in mind and troubleshooting hardware-related issues.
+``CONTEXT:`` The skills, tools, and methodology covered here could be seen in asset configuration and management as well as hardware-level troubleshooting in a corporate IT environment.
 
 ___
 
