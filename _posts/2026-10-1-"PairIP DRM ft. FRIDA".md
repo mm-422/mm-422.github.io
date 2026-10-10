@@ -1,13 +1,13 @@
-#---
+---
 title: "Deconstructing Google PairIP DRM ft. FRIDA"
 date: 2026-10-1 00:00:00
 categories: [research, reverse engineering]
 tags: [android, mobile security, reverse engineering]
 image: "/assets/images/pairip-drm/android-frida-2.png"
-mermaid: true
-#---
+---
 ``DOMAIN:`` Pentesting | Vulnerability Mgmt<br>
 ``CONTEXT:`` The skills, tools, and methodology covered here could be applicable in security assessments for dev teams and/or organizations to identify any security oversight in the SDLC process (Android Platform) and address them with appropriate remedies or mitigations.
+
 ___
 
 ## Executive Summary
@@ -82,6 +82,9 @@ Misc
 • AntiSplit-M v2.3.2
 ```
 
+![setup-scrnshot](/assets/images/pairip-drm/1-setup.avif)
+_Waydroid on the left. Kali Linux on the right._
+
 ___
 
 ## Assessment
@@ -99,7 +102,7 @@ Some apps, typically ones that utilize large assets and libraries, are packaged 
 
 We can view the contents of an XAPK by simply extracting the archive or renaming it to a ".zip" first if needed.
 
-[IMG-XAPK-CONTENTS]
+![xapk-content](/assets/images/pairip-drm/2-apk-contents.avif)
 
 #### Installation
 A Waydroid emulator with Lineage OS was used for testing. All tools and source files were placed in a separate Kali Linux VM to keep the environment clean. Unfortunately, Waydroid does not have a built-in installer for XAPK files. So we would have to either:
@@ -109,14 +112,14 @@ A Waydroid emulator with Lineage OS was used for testing. All tools and source f
 
 I opted to merge the separate files with a tool called AntiSplitM. The resulting APK file was then installed on the Waydroid emulator via Android Debug Bridge (ADB).
 
-[STREAMED-INSTALL]
+![install](/assets/images/pairip-drm/3-streamed-install.avif)
 
 NOTE: The Waydroid emulator is an x86-based application. It does not come with the necessary libraries to run a native ARM64 application like Balloons 3D. In order to do so, we would require a translation layer to convert the system calls performed by the app meant for an ARM processor (as those found in modern phones) to ones that are compatible with a desktop-class x86 processor. This can be done with community-made scripts such as the `waydroid_script`.
 
 #### First Launch
 With installation complete, we boot up Balloons 3D, only to be met with a short loading animation, followed by the dreaded "Google Play" error.
 
-[GOOGLE PLAY ERROR]
+![setup-scrnshot](/assets/images/pairip-drm/4-gplay-error.avif)
 
 This error is the direct output of the PairIP routine which detected that this specific copy of Balloons 3D was not obtained from the official Play Store. Our goal is to bypass this error message which would require bypassing the PairIP mechanism.
 
@@ -276,7 +279,7 @@ Java.perform(function () {
 ```
 
 CLASS LOADER LOGGER
-```
+```java
 Java.perform(function () {
 	
 	/* We build a wrapper for java.lang.ClassLoader
@@ -321,12 +324,13 @@ Java.perform(function () {
 
 The most impactful of these three scripts it the Class Loader Logger. This script prints the exact name of classes loaded by the app as it executes. We simply need to confirm if the app calls `com.pairip.licensecheck.LicenseClient` or at least `com.pairip.licensecheck.LicenseActivity` to confirm the route.
 
-[COMMAND-SCRNSHOT]
-[COMMAND-OUTPUT]
+![class-cmd](/assets/images/pairip-drm/5-classloader-cmd.avif)
 
-We see LicenseActivity is called shortly before the app displays the "Google Play" error message. However, we do not spot any instance of LicenseClient in the terminal output. This might be due to an asynchronous process of some sort.
+![class-output](/assets/images/pairip-drm/5-classloader-output.avif)
 
-Let's try hooking directly into the LicenseClient class with the following Frida script:
+We see `LicenseActivity` is called shortly before the app displays the "Google Play" error message. However, we do not spot any instance of `LicenseClient` in the terminal output. This might be due to an asynchronous process of some sort.
+
+Let's try hooking directly into the `LicenseClient` class with the following Frida script:
 ```java
 Java.perform(function () {
 	console.log("[*] Script loaded");
@@ -363,17 +367,17 @@ Java.perform(function () {
 }); 
 
 ```
-[COMMAND OUTPUT]
+![license-client-hook](/assets/images/pairip-drm/6-license-client.avif)
 
-With this script, we can observe that the LicenseClient class is indeed called by the app, where intercepting it and returning either an incorrect or unexpected value, causes the app to stay on a loading screen animation indefinitely. We could ascertain that it is "waiting" for an appropriate response or result from LicenseClient.
-We will now analyze the LicenseClient class in depth in the next section.
+With this script, we can observe that the `LicenseClient` class is indeed called by the app, where intercepting it and returning either an incorrect or unexpected value, causes the app to stay on a loading screen animation indefinitely. We could ascertain that it is "waiting" for an appropriate response or result from `LicenseClient`.
+We will now analyze the `LicenseClient` class in depth in the next section.
 
 ### ♦️ Surgical Exploitation Vector
-The LicenseClient class contains numerous methods like `startPaywallActivity` and `handleTrialEnd` that are designed to address various license verification scenarios.
+The `LicenseClient` class contains numerous methods like `startPaywallActivity` and `handleTrialEnd` that are designed to address various license verification scenarios.
 
 We need only identify the specific method or routine that is tasked with evaluating application integrity. At the very top of `com.pairip.licensecheck.LicenseClient`, we spot an internal enumeration class called `LicenseCheckState`:
 
-[TOP OF LICENSECLIENT]
+![license-client-top](/assets/images/pairip-drm/7-license-client-top.avif)
 
 ```java
 public enum LicenseCheckState {
@@ -476,9 +480,9 @@ Fuzzing the replacement ordinal values (0-5) yielded explicit results.
 - Returning `1` (`FULL_CHECK_OK`) forced the app to try to read cryptographic payload structures that were not present, triggering a native null pointer crash.
 - Returning **`2` (`LOCAL_CHECK_OK`)** successfully convinced the application engine that the security requirements had been met locally. The verification routine was bypassed, the fatal error dialog was suppressed, and control was safely handed down to the underlying Unity Engine runtime engine (`com.unity3d.player.UnityPlayerActivity`), establishing a complete DRM bypass.
 
-[RESULT OF SCRIPT]
+![ordinal-result](/assets/images/pairip-drm/8-ordinal-result.avif)
 
-We can see that the LicenseActivity class is completely absent from the terminal output. In its place, we see several new calls to classes like `sun.security.provider.certpath` that correlate with an application update process, either triggered by an internal "auto-update" logic or the app believing itself to be "incomplete" as a result of us having merged the APK prior to installation, possibly affecting the internal file paths.
+We can see that the `LicenseActivity` class is completely absent from the terminal output. In its place, we see several new calls to classes like `sun.security.provider.certpath` that correlate with an application update process, either triggered by an internal "auto-update" logic or the app believing itself to be "incomplete" as a result of us having merged the APK prior to installation, possibly affecting the internal file paths.
 
 These elements are outside the scope of this project.
 
@@ -490,23 +494,23 @@ We were able to identify the critical internal state machine due to explicit enu
 
 Utilize Google R8/ProGuard flatten control flow structures, randomize representation values for variables, and aggressively obfuscate internal state definitions.
 
-- PROS: Significantly increase difficulty of reverse engineering and static analysis with minimal overhead on runtime performance.
-- CONS: Does not prevent dynamic analysis, memory tracing or hooking via tools like Frida.
+- `PROS`: Significantly increase difficulty of reverse engineering and static analysis with minimal overhead on runtime performance.
+- `CONS`: Does not prevent dynamic analysis, memory tracing or hooking via tools like Frida.
 
 
 ### ♦️ Upgrading PairIP to Native Layer
 A hardened, native C/C++ implementation of the PairIP mechanism presents a far greater hurdle for reverse engineers to overcome. They would need to evade internal checks in order for debugging attachments and Frida server processes to run unimpeded.
 
-- PROS: Dramatically increases complexity for automated tools.
-- CONS: Higher development complexity that can complicate cross-platform compatibility. Can also lead to performance penalties if the internal encryption/decryption routines are aggressive or set to execute continuously during app operation. This may be undesirable for demanding applications.
+- `PROS`: Dramatically increases complexity for automated tools.
+- `CONS`: Higher development complexity that can complicate cross-platform compatibility. Can also lead to performance penalties if the internal encryption/decryption routines are aggressive or set to execute continuously during app operation. This may be undesirable for demanding applications.
 
 
 ### ♦️ Server-Side Attestation
 Client-side DRM solutions are ultimately doomed especially when they trust the app's internal reporting and decision-making explicitly, as was the case with the state machine contained within `com.pairip.licensecheck.LicenseClient`.
 
-Organizations should enforce a server-side attestation model where the mobile app would request a unique cryptographic token directly from the Google Play Integrity API. This raw token is passed to the organization's backend infrastructure for server-to-server verification.
+Organizations should enforce a server-side attestation model where the mobile app would request a unique cryptographic token directly from the Google Play Integrity API. This raw token is passed to the organization's back-end infrastructure for server-to-server verification.
 
-Crucial game resources, scripts, or asset configuration packs would remain heavily encrypted inside the application storage package, and the decryption keys are *only* delivered to the application instance after the backend verifies that the token signature is legitimate, official, and unmodified.
+Crucial game resources, scripts, or asset configuration packs would remain heavily encrypted inside the application storage package, and the decryption keys are *only* delivered to the application instance after the back-end verifies that the token signature is legitimate, official, and unmodified.
 
-- PROS: Bypassing the local client logic achieves nothing because the app will lack the cryptographic keys required to function.
-- CONS: Requires a permanent, active internet connection for initialization. Offline functionality becomes impossible. Additionally introduces server maintenance costs.
+- `PROS`: Bypassing the local client logic achieves nothing because the app will lack the cryptographic keys required to function.
+- `CONS`: Requires a permanent, active internet connection for initialization. Offline functionality becomes impossible. Additionally introduces server maintenance costs.
