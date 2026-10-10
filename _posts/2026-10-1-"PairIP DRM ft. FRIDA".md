@@ -3,7 +3,7 @@ title: "Deconstructing Google PairIP DRM ft. FRIDA"
 date: 2026-10-1 00:00:00
 categories: [research, reverse engineering]
 tags: [android, mobile security, reverse engineering]
-image: "/assets/images/pairip-drm/android-frida.png"
+image: "/assets/images/pairip-drm/android-frida-2.png"
 mermaid: true
 #---
 ``DOMAIN:`` Pentesting | Vulnerability Mgmt<br>
