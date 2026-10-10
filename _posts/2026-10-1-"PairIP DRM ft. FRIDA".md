@@ -366,11 +366,14 @@ Java.perform(function () {
 [COMMAND OUTPUT]
 
 With this script, we can observe that the LicenseClient class is indeed called by the app, where intercepting it and returning either an incorrect or unexpected value, causes the app to stay on a loading screen animation indefinitely. We could ascertain that it is "waiting" for an appropriate response or result from LicenseClient.
-
 We will now analyze the LicenseClient class in depth in the next section.
 
 ### ♦️ Surgical Exploitation Vector
-With the core initialization workflow mapped out, the focus shifted to identifying the precise evaluation gate determining application integrity. Static analysis of `LicenseClient.java` revealed a central state machine dependent on an internal enumeration class: `com.pairip.licensecheck.LicenseClient$LicenseCheckState`. 
+The LicenseClient class contains numerous methods like `startPaywallActivity` and `handleTrialEnd` that are designed to address various license verification scenarios.
+
+We need only identify the specific method or routine that is tasked with evaluating application integrity. At the very top of `com.pairip.licensecheck.LicenseClient`, we spot an internal enumeration class called `LicenseCheckState`:
+
+[TOP OF LICENSECLIENT]
 
 ```java
 public enum LicenseCheckState {
@@ -382,13 +385,86 @@ public enum LicenseCheckState {
 }
 ```
 
-The application relies heavily on checking the `.ordinal()` value of this state machine inside `initializeLicenseCheck()`. When the app boots normally, it evaluates to `CHECK_REQUIRED` (0) and triggers the asynchronous Google Play connection loop to validate structural parameters. If the signature check fails, the application calls an embedded error routine, triggers `LicenseActivity` to paint a "Google Play Store Error" UI dialog, and calls a hardcoded termination hook: `LicenseClient.exitAction` running `System.exit(0)`.
+This internal enumeration class is likely part of a "state machine".
+Under the context of Java programming, a state machine is a model for managing an app and its components' states using values called "Ordinals".
+The `ordinal()` method is a built-in Java class that is used to query the position of an enumeration constant.
 
-To cleanly bypass this gate without breaking the runtime context, a multi-layered Frida hook was deployed to target three specific bottlenecks:
+The application relies heavily on checking the `.ordinal()` value of this state machine inside `initializeLicenseCheck()`. When the app boots normally, it evaluates to `CHECK_REQUIRED` (0) and triggers the asynchronous Google Play connection loop to validate structural parameters.
 
-1. **Neutralizing the Exit Kill-Switch:** Rather than battling the UI dialog lifecycle, the `exitAction` variable—which holds a standard Java `Runnable` class—was systematically defused. A custom `DummyRunnable` class was generated via Frida and dynamically assigned to `LicenseClient.exitAction.value`. If any secondary validation checks or asynchronous failures triggered an exit call, the execution hit a dead-end method, keeping the host application process completely alive.
-2. **Forcing Natural Initialization:** The logic requires the application to branch properly through its core initialization pipeline. The helper method `isIsolatedProcess()` was pinned to explicitly return `false`. This forced the runtime away from dead-end sandbox code paths and allowed standard execution context mapping.
-3. **Surgical Enum Ordinal Tampering:** Standard global enum interception is highly unstable, as hooking `java.lang.Enum.ordinal()` impacts unrelated system enums (such as font rendering, localization, and graphic attributes), causing immediate stability crashes. To circumvent this, the hook was bound directly to the inner class `LicenseClient$LicenseCheckState` and restricted with strict validation logic:
+If the signature check fails, the application calls an embedded error routine, triggers `LicenseActivity` to construct a "Google Play" error dialog, and calls a final hardcoded termination hook: `LicenseClient.exitAction` running `System.exit(0)`.
+
+```java
+    protected static Runnable exitAction = new Runnable() { // from class: com.pairip.licensecheck.LicenseClient.1
+        @Override // java.lang.Runnable
+        public void run() {
+            System.exit(0);
+        }
+    };
+```
+
+If we could intercept the state machine and modify the ordinal values as they are requested, we could bypass the "license check" routine and thus, overcome the PairIP mechanism without any destructive modifications.
+
+To build an effective Frida script, we need to take into account specific bottlenecks:
+#### The State Machine Neutralizer
+```java
+Java.perform(function () {
+    console.log("[*] Script loaded. Applying surgical structural patch...");
+
+    try {
+        var LicenseClient = Java.use("com.pairip.licensecheck.LicenseClient");
+        var LicenseCheckState = Java.use("com.pairip.licensecheck.LicenseClient$LicenseCheckState");
+        var Runnable = Java.use("java.lang.Runnable");
+
+        // 1. Rewrite the exit action so it can never kill the app process
+        var DummyRunnable = Java.registerClass({
+            name: 'com.pairip.bypass.DummyRunnable',
+            implements: [Runnable],
+            methods: {
+                run: function () {
+                    console.log("[+] System attempted to call exitAction(). Blocked safely!");
+                }
+            }
+        });
+        
+        LicenseClient.exitAction.value = DummyRunnable.$new();
+        console.log("[+] exitAction successfully defused.");
+
+        // 2. Ensure isolated process check evaluates natively to false to allow initialization
+        LicenseClient.isIsolatedProcess.implementation = function () {
+            return false;
+        };
+
+        // 3. Safely target the ordinal method ONLY for the target Enum class
+        LicenseCheckState.ordinal.implementation = function () {
+            var realOrdinal = this.ordinal();
+            var stateStr = this.toString();
+            
+            // Validate that we are only intercepting the specific PairIP state machine
+            if (stateStr === "CHECK_REQUIRED" && realOrdinal === 0) {
+		console.log("STATE: " + stateStr);
+                console.log("[========= BYPASS TRIGGERED =========]");
+                console.log("[+] Selectively swapping CHECK_REQUIRED -> LOCAL_CHECK_OK (2)");
+                return 2; 
+            }
+
+            return realOrdinal;
+        };
+
+    } catch (err) {
+        console.log("[-] Patch deployment error: " + err);
+    }
+});
+
+```
+
+#### Neutralizing the Exit Kill-Switch
+Rather than battling the UI dialog lifecycle, the `exitAction` variable—which holds a standard Java `Runnable` class—was systematically defused. A custom `DummyRunnable` class was generated via Frida and dynamically assigned to `LicenseClient.exitAction.value`. If any secondary validation checks or asynchronous failures triggered an exit call, the execution hit a dead-end method, keeping the host application process completely alive.
+
+#### Forcing Natural Initialization
+The logic requires the application to branch properly through its core initialization pipeline. The helper method `isIsolatedProcess()` was pinned to explicitly return `false`. This forced the runtime away from dead-end sandbox code paths and allowed standard execution context mapping.
+
+#### Surgical Enum Ordinal Tampering
+Standard global enum interception is highly unstable, as hooking `java.lang.Enum.ordinal()` impacts unrelated system enums (such as font rendering, localization, and graphic attributes), causing immediate stability crashes. To circumvent this, the hook was bound directly to the inner class `LicenseClient$LicenseCheckState` and restricted with strict validation logic:
 
 ```javascript
 if (stateStr === "CHECK_REQUIRED" && realOrdinal === 0) { ... }
@@ -396,24 +472,41 @@ if (stateStr === "CHECK_REQUIRED" && realOrdinal === 0) { ... }
 
 By ensuring that the interceptor *only* targeted the exact state machine when its state was actively `CHECK_REQUIRED`, all other application enums were left unharmed. 
 
-Fuzzing the replacement ordinal values (0-5) yielded explicit results. Returning `1` (`FULL_CHECK_OK`) forced the app to try to read cryptographic payload structures that were not present, triggering a native null pointer crash. However, selectively returning **`2` (`LOCAL_CHECK_OK`)** successfully convinced the application engine that the security requirements had been met locally. The verification routine was bypassed, the fatal error dialog was suppressed, and control was safely handed down to the underlying Unity Engine runtime engine (`com.unity3d.player.UnityPlayerActivity`), establishing a complete DRM bypass.
+Fuzzing the replacement ordinal values (0-5) yielded explicit results.
+- Returning `1` (`FULL_CHECK_OK`) forced the app to try to read cryptographic payload structures that were not present, triggering a native null pointer crash.
+- Returning **`2` (`LOCAL_CHECK_OK`)** successfully convinced the application engine that the security requirements had been met locally. The verification routine was bypassed, the fatal error dialog was suppressed, and control was safely handed down to the underlying Unity Engine runtime engine (`com.unity3d.player.UnityPlayerActivity`), establishing a complete DRM bypass.
+
+[RESULT OF SCRIPT]
+
+We can see that the LicenseActivity class is completely absent from the terminal output. In its place, we see several new calls to classes like `sun.security.provider.certpath` that correlate with an application update process, either triggered by an internal "auto-update" logic or the app believing itself to be "incomplete" as a result of us having merged the APK prior to installation, possibly affecting the internal file paths.
+
+These elements are outside the scope of this project.
 
 ---
 
-## Mitigation
-To safeguard mobile applications against runtime dynamic instrumentation and signature-spoofing attacks, organizations should adopt a defense-in-depth approach rather than relying on standard client-side validation logic.
+## Mitigations
+### ♦️ Utilize R8/ProGuard for Robust Obfuscation
+We were able to identify the critical internal state machine due to explicit enum class strings like `CHECK_REQUIRED` and `LOCAL_CHECK_OK`. An attacker could easily locate these strings via decompilers like JADX and manipulate the internal mechanism.
 
-### 1. Robust Code Obfuscation & R8/ProGuard Control Flow Flattening
-* **Mechanism:** Simple name obfuscation leaves package structures and method logic intact. Threat actors can easily discover state machines if enums preserve strings like `CHECK_REQUIRED` or `LOCAL_CHECK_OK`. Advanced optimization configurations must be injected into the ProGuard/R8 compilation pipeline to flatten control flow structures, randomize integer representation values for variables, and aggressively obfuscate or inline internal state definitions.
-* **Pros:** Marginally zero overhead on runtime performance; significantly increases the cognitive load for reverse engineers attempting static code mapping.
-* **Cons:** Does not explicitly prevent dynamic memory tracing or hooking via frameworks like Frida if an attacker successfully identifies entry-point wrappers.
+Utilize Google R8/ProGuard flatten control flow structures, randomize representation values for variables, and aggressively obfuscate internal state definitions.
 
-### 2. Upgrading Anti-Tamper Suites to Native Layer Enforcement
-* **Mechanism:** The application should transition its integrity protection suites away from pure Java bytecode implementations into hardened native C/C++ compiled binaries (`.so` libraries). Native enforcement engines can execute low-level operating system hooks to monitor runtime integrity, detect debugging attachments via `ptrace(PTRACE_TRACEME)`, check for signature modifications natively, and actively scan process memory maps (`/proc/self/maps`) to isolate and sever Frida server interaction ports.
-* **Pros:** Dramatically increases complexity for automated modification tools; strips away standard Java-level hooking vectors.
-* **Cons:** Native protection layers present higher development complexity, complicate cross-platform compilation architecture (ARM vs. x86), and can lead to structural overhead if executed continuously during execution.
+- PROS: Significantly increase difficulty of reverse engineering and static analysis with minimal overhead on runtime performance.
+- CONS: Does not prevent dynamic analysis, memory tracing or hooking via tools like Frida.
 
-### 3. Server-Side Attestation & Asset Encryption Decoupling
-* **Mechanism:** The fundamental flaw in client-side DRM is trusting local application decisions. Organizations should enforce a server-side attestation model. The mobile app must request a unique cryptographic attestation token directly from the Google Play Integrity API. This raw token is passed to the organization's backend infrastructure for server-to-server verification. Crucial game resources, scripts, or asset configuration packs remain heavily encrypted inside the application storage package, and the decryption keys are *only* delivered to the application instance after the backend verifies that the token signature is legitimate, official, and unmodified.
-* **Pros:** The definitive industry standard for preventing application duplication, fraud, and asset piracy. Bypassing the local client logic achieves nothing because the app will lack the cryptographic keys required to function.
-* **Cons:** Requires a permanent, active internet connection for initialization; offline functionality becomes impossible. Additionally introduces server maintenance costs and scales infrastructure dependency requirements.
+
+### ♦️ Upgrading PairIP to Native Layer
+A hardened, native C/C++ implementation of the PairIP mechanism presents a far greater hurdle for reverse engineers to overcome. They would need to evade internal checks in order for debugging attachments and Frida server processes to run unimpeded.
+
+- PROS: Dramatically increases complexity for automated tools.
+- CONS: Higher development complexity that can complicate cross-platform compatibility. Can also lead to performance penalties if the internal encryption/decryption routines are aggressive or set to execute continuously during app operation. This may be undesirable for demanding applications.
+
+
+### ♦️ Server-Side Attestation
+Client-side DRM solutions are ultimately doomed especially when they trust the app's internal reporting and decision-making explicitly, as was the case with the state machine contained within `com.pairip.licensecheck.LicenseClient`.
+
+Organizations should enforce a server-side attestation model where the mobile app would request a unique cryptographic token directly from the Google Play Integrity API. This raw token is passed to the organization's backend infrastructure for server-to-server verification.
+
+Crucial game resources, scripts, or asset configuration packs would remain heavily encrypted inside the application storage package, and the decryption keys are *only* delivered to the application instance after the backend verifies that the token signature is legitimate, official, and unmodified.
+
+- PROS: Bypassing the local client logic achieves nothing because the app will lack the cryptographic keys required to function.
+- CONS: Requires a permanent, active internet connection for initialization. Offline functionality becomes impossible. Additionally introduces server maintenance costs.
