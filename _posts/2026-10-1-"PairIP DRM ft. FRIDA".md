@@ -1,5 +1,5 @@
 ---
-title: "Deconstructing Google PairIP DRM ft. FRIDA"
+title: "Deconstructing Google PairIP ft. FRIDA"
 date: 2026-10-1 00:00:00
 categories: [research, reverse engineering]
 tags: [android, mobile security, reverse engineering]
@@ -150,7 +150,7 @@ For now, it is worth locating parts of if not the exact string from the error di
 With a quick string search via the JADX GUI Text Search tool, we find an exact match for the "Google Play" error that traces back to a package called `com.pairip.licensecheck.LicenseActivity'
 
 #### An Error Dialog Method in com.pairip.licensecheck.LicenseActivity
-```
+```java
     /* JADX INFO: Access modifiers changed from: private */
     public /* synthetic */ void lambda$showErrorDialog$0() {
         try {
@@ -170,7 +170,7 @@ Based on the code, it is reasonable to conclude that this method is responsible 
 We could do this by tracing back further from this point or approaching it from the other way by observing where the main activity, `com.pairip.application.Application` leads.
 
 #### com.pairip.application.Application
-```
+```java
 package com.pairip.application;
 
 import android.content.Context;
@@ -193,7 +193,7 @@ In order to gather visible evidence of the application's execution route, we nee
 We can launch the app and attach scripts to it to perform such functions using Frida.
 Here are three scripts used for this project that each perform a specific function.
 
-FILE PATH LOGGER
+**FILE PATH LOGGER**
 ```java
 // Script to spy on File Paths & Shell Commands
 
@@ -227,7 +227,7 @@ Java.perform(function () {
 });
 ```
 
-FILE ACCESS LOGGER
+**FILE ACCESS LOGGER**
 ```java
 Java.perform(function () {
     var File = Java.use("java.io.File");
@@ -278,7 +278,7 @@ Java.perform(function () {
 });
 ```
 
-CLASS LOADER LOGGER
+**CLASS LOADER LOGGER**
 ```java
 Java.perform(function () {
 	
