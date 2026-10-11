@@ -163,12 +163,10 @@ flowchart TD
     linkStyle 0 stroke:lime;
   B --> C(Endorsement Primary Seed - EPS)
     style C fill:#000000, stroke:white;
-    style C fill:#000000, stroke:#000000, font-style: italic;
-    linkStyle 0 stroke:lime;
+    linkStyle 1 stroke:lime;
   C --> D(Endorsement Key - EK)
     style D fill:#000000, stroke:white;
-    style D fill:#000000, stroke:#000000, font-style: italic;
-    linkStyle 0 stroke:lime;
+    linkStyle 2 stroke:lime;
   D --> E[Used to generate new child keys.]
     style E fill:#000000, stroke:#000000, font-style: italic;
     linkStyle 3 stroke:lime;
