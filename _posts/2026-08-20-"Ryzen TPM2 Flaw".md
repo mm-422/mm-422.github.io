@@ -247,4 +247,4 @@ Download the latest AGESA microcode from the BIOS download/update pages of your 
 
 ## Special Considerations
 I would like to express my appreciation to Ken Goldman for providing and maintaining the IBM TPM Software Stack. This project would have not been possible without his contributions. You may find his work over at SourceForge.<br>
-LINK: https://sourceforge.net/projects/ibmtpm20tss
+<mark>LINK:</mark> https://sourceforge.net/projects/ibmtpm20tss
