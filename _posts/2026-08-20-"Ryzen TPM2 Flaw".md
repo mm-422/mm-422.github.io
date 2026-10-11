@@ -170,7 +170,7 @@ flowchart TD
   D --> E[Used to generate new child keys.]
     style E fill:#000000, stroke:#000000, font-style: italic;
     linkStyle 3 stroke:lime;
-  E --> F(Example: Attestation Key - AK)
+  E --> F(Example: Attestation Key / AK)
     style F fill:#000000, stroke:white;
     linkStyle 4 stroke:lime;
 ```
