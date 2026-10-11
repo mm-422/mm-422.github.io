@@ -51,7 +51,7 @@ While it is possible to apply a "rough bypass" by way of manual code patching, t
 #### Malicious Code Injection
 - Threat actors are free to modify an application and repackage it.
 - With active signature enforcement neutralized, they could inject malware.
-- This could become part of an impersonation campaign where the threat actor could up a fake "official website" to target unsuspecting users and spread the malicious APK.
+- This could become part of an impersonation campaign where the threat actor could set up a fake "official website" to target unsuspecting users and spread the malicious APK.
 - This could lead to reputation and revenue loss.
 
 #### API Exploitation
