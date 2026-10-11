@@ -158,7 +158,7 @@ This is done via the `TPM2_Certify` command, which takes a child key and wraps i
 ```mermaid
 flowchart TD
   A(TPM Manufacturer) --> B[Builds new TPM with unique ID ie. EPS]
-    style A fill:#000000, stroke:white;
+    style A fill:blue, stroke:white;
     style B fill:#000000, stroke:#000000, font-style: italic;
     linkStyle 0 stroke:lime;
   B --> C(Endorsement Primary Seed / EPS)
