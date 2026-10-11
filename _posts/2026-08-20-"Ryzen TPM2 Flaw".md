@@ -162,18 +162,18 @@ flowchart TD
     style B fill:#000000, stroke:#000000, font-style: italic;
     linkStyle 0 stroke:lime;
   B --> C(Endorsement Primary Seed - EPS)
-    style A fill:#000000, stroke:white;
-    style B fill:#000000, stroke:#000000, font-style: italic;
+    style C fill:#000000, stroke:white;
+    style C fill:#000000, stroke:#000000, font-style: italic;
     linkStyle 0 stroke:lime;
   C --> D(Endorsement Key - EK)
-    style A fill:#000000, stroke:white;
-    style B fill:#000000, stroke:#000000, font-style: italic;
+    style D fill:#000000, stroke:white;
+    style D fill:#000000, stroke:#000000, font-style: italic;
     linkStyle 0 stroke:lime;
   D --> E[Used to generate new child keys.]
-    style E fill:#000000, stroke:white;
+    style E fill:#000000, stroke:#000000, font-style: italic;
     linkStyle 3 stroke:lime;
   E --> F(Example: Attestation Key - AK)
-    style F fill:#000000, stroke:#000000, font-style: italic;
+    style F fill:#000000, stroke:white;
     linkStyle 4 stroke:lime;
 ```
 
