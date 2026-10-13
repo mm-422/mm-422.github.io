@@ -55,11 +55,12 @@ VMs & Emulators
 • Pixel 9 virtual device running AOSP API Level 35 (Android 15)
 
 Misc
-• Python3.10 with cryptography library
+• Python3.14 with cryptography library
 • Android Debug Bridge (ADB) v1.0.41
 ```
 ![setup](/assets/images/adb-rce/1-setup.avif)
 _AVD running on the left. Kali Linux VM on the right._
+
 ___
 
 ## Assessment
@@ -110,6 +111,24 @@ Execute the script and specify the appropriate IP and port numbers. If using a r
 ![success](/assets/images/adb-rce/7-success.avif)
 
 The script acts immediately to initiate the mTLS handshake, bypass authentication by submitting a mismatched key for the certificate, and finally spawn a shell session.
+
+___
+
+## Security Impact - Why This Matters
+### ♦️ BYOD Fleet Vulnerability
+As this vulnerability is relatively recent following the date of publish for this project, a substantial portion of corporate mobile device fleets likely operate on Android version older than 17.
+
+Because OS upgrades lag behind rapidly shifting threat landscapes, unpatched or delayed security baseline states leave fleets exposed to network compromise.
+
+### ♦️ "Power Users" & Developer Risk Profile
+The wireless debugging feature is often enabled by developers, QA testers, and even tech-savvy users/employees for reasons such as convenience, automation, or device modding.
+
+When these users connect their personal or work-profile devices to unsecured corporate guest Wi-Fi, home networks, or public hotspots, they inadvertently create an open attack surface.
+
+### ♦️ Silent Lateral Movement
+Because the exploit bypasses mTLS authentication without any user interaction (Zero-Click), an attacker on the same local network segment can silently establish an interactive shell in seconds.
+
+This would then allow them to pivot from one compromised mobile device to local network services, credential data stores, or even stage further internal network reconnaissance.
 
 ___
 
