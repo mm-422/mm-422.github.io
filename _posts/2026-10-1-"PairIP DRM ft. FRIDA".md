@@ -122,7 +122,7 @@ With installation complete, we boot up `Balloons 3D`, only to be met with a shor
 This error is the direct output of the PairIP routine which detected that this specific copy of `Balloons 3D` was not obtained from the official Google Play app store. Our goal is to bypass this error message which would require bypassing the PairIP mechanism entirely.
 
 
-### ♦️ Static Analysis & Control Flow Mapping
+### ♦️ Static Analysis
 **Error Dialog Reference**
 ```
 Something went wrong.
@@ -382,7 +382,7 @@ These elements however are outside the scope of this project and need not be add
 ---
 
 ## Mitigations
-### ♦️ Utilize R8/ProGuard for Robust Obfuscation
+### ♦️ Utilize R8/ProGuard 
 We were able to identify the critical internal state machine due to explicit enum class strings like `CHECK_REQUIRED` and `LOCAL_CHECK_OK`. An attacker could easily locate these strings via decompilers like JADX and manipulate the internal mechanism.
 
 Utilize Google R8/ProGuard flatten control flow structures, randomize representation values for variables, and aggressively obfuscate internal state definitions.
@@ -391,7 +391,7 @@ Utilize Google R8/ProGuard flatten control flow structures, randomize representa
 - `CONS`: Does not prevent dynamic analysis, memory tracing or hooking via tools like Frida.
 
 
-### ♦️ Upgrading PairIP to Native Layer
+### ♦️ Upgrade PairIP Implementation
 A hardened, native C/C++ implementation of the PairIP mechanism presents a far greater hurdle for reverse engineers to overcome. They would need to evade internal checks in order for debugging attachments and Frida server processes to run unimpeded.
 
 - `PROS`: Dramatically increases complexity for automated tools.
