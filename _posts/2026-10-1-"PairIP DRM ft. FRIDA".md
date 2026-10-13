@@ -43,16 +43,16 @@ While it is possible to apply a "rough bypass" by way of manual code patching, t
 
 
 ### ♦️ Security Impact - Why This Matters
-#### Exposure of Core/Business Logic
+**Exposure of Core/Business Logic**
 - Attacker that bypasses the PairIP verification gate would be free to read, analyze, and rip the internal code as well as business logic without affecting app functionality.
 - In the case of a non-native implementation of PairIP and absence of encryption, an attacker could steal proprietary code/scripts.
 
-#### Malicious Code Injection
+**Malicious Code Injection**
 - With integrity protection neutralized, threat actors are free to inject malware into apps and repackage them.
 - This could become part of an impersonation campaign.
 - Threat actor would set up a fake "official website" to target unsuspecting users and spread the malicious APK, potentially leading to reputation and revenue loss.
 
-#### API Exploitation
+**API Exploitation**
 - Attacker could take advantage of apps that communicate with sensitive corporate back-ends once integrity protection has been bypassed.
 - E.g. Siphon crypto keys, session tokens, enumerate API endpoints.
   
@@ -93,7 +93,7 @@ We will call this app, `Balloons 3D V1.0`. Any reference to its real name or com
 
 To reiterate, the goal of this project is to demonstrate how PairIP alone can be insufficient to protect an application's integrity. There is no intent to harm, defame, or discredit any party. Findings are supported with recommended remediation/mitigation steps at the end.
 
-#### Obtaining the Package
+**Obtaining the Package**
 I managed to obtain an XAPK of the Balloons 3D app. An XAPK file can be thought of as a "zipped up" folder of multiple APKs and configuration files. These may be libraries specific to the platform (e.g. config.arm64_v8a.apk) as well as crucial expansion files containing large media and assets called OBB files (Opaque Binary Blob).
 
 Some apps, typically ones that utilize large assets and libraries, are packaged this way to get around the strict file size limits on the Google PlayStore.
@@ -102,7 +102,7 @@ We can view the contents of an XAPK by simply extracting the archive or renaming
 
 ![xapk-content](/assets/images/pairip-drm/2-apk-contents.avif)
 
-#### Installation
+**Installation**
 A Waydroid emulator with Lineage OS was used for testing. All tools and source files were placed in a separate Kali Linux VM to keep the environment clean. Unfortunately, Waydroid does not have a built-in installer for XAPK files. So we would have to either:
 	- Use a dedicated XAPK installer.
 	- Install each file manually.
@@ -114,7 +114,7 @@ I opted to merge the separate files with a tool called AntiSplit-M. The resultin
 
 **Note:** The Waydroid emulator is x86 based. It does not come with the necessary libraries to run a native ARM64 application like `Balloons 3D`. In order to do so, we would require a translation layer to convert the system calls performed by the app meant for an ARM processor (as those found in modern phones) to ones that are compatible with a desktop-class x86 processor. This can be done with community-made scripts such as the `waydroid_script`.
 
-#### First Launch
+**First Launch**
 With installation complete, we boot up `Balloons 3D`, only to be met with a short loading animation, followed by the dreaded "Google Play" error.
 
 ![setup-scrnshot](/assets/images/pairip-drm/4-gplay-error.avif)
@@ -142,7 +142,7 @@ This is the activity that is responsible for launching the Balloons application.
 
 We could "patch out" the PairIP activity in the Manifest but that would not demonstrate where exactly in the execution chain the implementation falls short. To do so, we will need to delve into dynamic analysis with some logging.
 
-#### String Search
+**String Search**
 For now, it is worth locating parts of, if not the exact string from the error dialog to see if we could "trace back" from the class that is responsible for generating error messages to the one that is responsible for the "comparison check" that determines our copy of `Balloons 3D` as legitimate or otherwise.
 
 With a quick string search via the JADX GUI "Text Search" tool, we find an exact match for the "Google Play" error that traces back to a package called `com.pairip.licensecheck.LicenseActivity'
