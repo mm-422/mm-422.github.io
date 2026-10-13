@@ -6,7 +6,7 @@ tags: [android, crypto, authentication]     # TAG names should always be lowerca
 image: "/assets/images/adb-rce/adb-rce-thumbnail-2.png"
 ---
 ``DOMAIN:`` Sysadmin | Vulnerability Mgmt<br>
-``CONTEXT:`` The findings and methodology covered here could be applied to patch management and system hardening routines. An IT personnel would investigate a relevent critical vulnerability, compile their findings, examine existing systems for weaknesses and follow up with appropriate solutions or mitigations e.g. rolling out official security patches.
+``CONTEXT:`` The findings and methodology covered here could be applied to patch management and system hardening routines. An IT personnel would investigate a relevant critical vulnerability, compile their findings, examine existing systems for weaknesses and follow up with appropriate solutions or mitigations e.g. rolling out official security patches.
 
 ___
 
@@ -20,6 +20,7 @@ A threat actor within network reach is able to initiate a remote connection to a
 - Impact: Zero click RCE as shell user on vulnerable device within network reach.
 - Severity: High (CVSS ~8.8)
 - Remediation: Addressed in May 2026 Android Security Bulletin & Google Play System (Mainline) updates.
+- <mark>LINK:</mark> https://nvd.nist.gov/vuln/detail/cve-2026-0073
 
 This project explores the mechanisms involved leading to RCE with working demonstrations utilizing an Android Virtual Device (AVD) within Android Studio.
 
@@ -67,8 +68,8 @@ ___
 ### ♦️ Setup
 We begin by setting up the necessary environments, tools, and devices:
 - A Kali Linux VM was used to host the tools and scripts.
-- The target device is a Pixel 9 virtual device (Android Studio).
-Note: If using a physical device, please ensure you've obtained the necessary permissions.
+- The target device is a Pixel 9 virtual device (Android Studio).<br>
+_**Note:** If using a physical device, please ensure you've obtained the necessary permissions._
 - A socat relay was set up on the host (Fedora Workstation) in order to bridge communications from the VM to the Pixel 9 virtual device.
 ```bash
 # Sample socat relay
@@ -101,8 +102,9 @@ Once the connection has been made and the client device is set to "remembered" i
 
 ### ♦️ Execution
 We utilize a pre-made script for automating the mTLS authentication process. Below is a link to a Proof-of-Concept built by SecTestAnnaQuinn.<br>
-<mark>LINK:</mark> https://github.com/SecTestAnnaQuinn/CVE-2026-0073-Android-adbd-authentication-bypass-POC/tree/main
-**Note:** Always test untrusted material in a sandbox or controlled environment such as a VM.
+
+<mark>LINK:</mark> https://github.com/SecTestAnnaQuinn/CVE-2026-0073-Android-adbd-authentication-bypass-POC/tree/main<br>
+_**Note:** Always test untrusted material in a sandbox or controlled environment such as a VM._
 
 Ensure that the client device (Kali Linux VM) has been completely disconnected from the target device (Pixel 9) to prevent interference and connection errors.
 
