@@ -1,5 +1,5 @@
 ---
-title: "CVE-2026-0073 Investigation ft. ADB [WIP]"
+title: "CVE-2026-0073 Investigation ft. ADB"
 date: 2026-10-12 00:00:00 +/-TTTT
 categories: [research, cryptography]
 tags: [android, crypto, authentication]     # TAG names should always be lowercase
@@ -58,7 +58,8 @@ Misc
 • Python3.10 with cryptography library
 • Android Debug Bridge (ADB) v1.0.41
 ```
-
+![setup](/assets/images/adb-rce/1-setup.avif)
+_AVD running on the left. Kali Linux VM on the right._
 ___
 
 ## Assessment
@@ -68,26 +69,45 @@ We begin by setting up the necessary environments, tools, and devices:
 - The target device is a Pixel 9 virtual device (Android Studio).
 Note: If using a physical device, please ensure you've obtained the necessary permissions.
 - A socat relay was set up on the host (Fedora Workstation) in order to bridge communications from the VM to the Pixel 9 virtual device.
-
+```bash
+# Sample socat relay
+# Receives inbound data on 192.168.160.70
+# Forwards to 127.0.0.1 or "localhost" on Fedora
+socat TCP-LISTEN:40000,bind=192.168.160.70,fork TCP:127.0.0.1:40000
+```
 It is recommended to start with a fresh device if using an emulator via Android Studio to minimize instability and bugs.
 
 If starting with a clean device with no prior connection history, the `adb_keys` file under the `/data/misc/adb/` directory will either be non-existent or empty. This is where public keys (RSA) are kept for the purposes of mTLS authentication.
 
 We require the `adb_keys` file to be generated with a valid key in order to enable the "comparison check" phase of the mTLS handshake process. To do this, we simply need to connect to the target device via regular USB debugging i.e using ADB.
 
+![empty-adb](/assets/images/adb-rce/2-empty-adb.avif)
+
 We see here that the `adb_keys` file exists now but is empty. We need to trigger the target device to explicitly request for saving keys by turning on Wireless Debugging and initiating a successful connection.
+
+![wireless-dbg](/assets/images/adb-rce/4-wireless-dbg.avif)
 
 The IP and port details listed under the Wireless Debugging menu were noted down in order to configure the socat relay in the background for successful connection.
 
+![remember](/assets/images/adb-rce/4-remember.avif)
+
 Once the connection has been made and the client device is set to "remembered" in the target device, the `adb_keys` file should now be populated with a valid RSA key.
+
+![populated-adb](/assets/images/adb-rce/5-adb-key-filled.avif)
+
+![rsa-key](/assets/images/adb-rce/6-rsa-key.avif)
+
 
 ### ♦️ Execution
 We utilize a pre-made script for automating the mTLS authentication process. Below is a link to a Proof-of-Concept built by SecTestAnnaQuinn.<br>
 <mark>LINK:</mark> https://github.com/SecTestAnnaQuinn/CVE-2026-0073-Android-adbd-authentication-bypass-POC/tree/main
+**Note:** Always test untrusted material in a sandbox or controlled environment such as a VM.
 
 Ensure that the client device (Kali Linux VM) has been completely disconnected from the target device (Pixel 9) to prevent interference and connection errors.
 
 Execute the script and specify the appropriate IP and port numbers. If using a relay or ADB's port forwarding function, ensure you specify the correct port number.
+
+![success](/assets/images/adb-rce/7-success.avif)
 
 The script acts immediately to initiate the mTLS handshake, bypass authentication by submitting a mismatched key for the certificate, and finally spawn a shell session.
 
@@ -102,7 +122,7 @@ Disable Wireless Debugging feature when not actively developing. This prevents e
 
 ### ♦️ Strict Conditional Patching
 For code reviewers and maintainers, ensure cryptographic comparison return values are explicitly evaluated against expected success states rather than relying on loose truthy evaluations. Example:
-```C++
+```c
 // SNIPPET
 if (EVP_PKEY_cmp(...) == 1) // Enforces exact match for validation
 // SNIPPET
