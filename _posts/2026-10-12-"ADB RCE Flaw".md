@@ -3,7 +3,7 @@ title: "CVE-2026-0073 Investigation ft. ADB"
 date: 2026-10-12 00:00:00 +/-TTTT
 categories: [research, cryptography]
 tags: [android, crypto, authentication]     # TAG names should always be lowercase
-image: "/assets/images/adb-rce/adb-rce-thumbnail-2.png"
+image: "/assets/images/adb-rce/adb-rce-thumbnail-3.png"
 ---
 ``DOMAIN:`` Sysadmin | Vulnerability Mgmt<br>
 ``CONTEXT:`` The findings and methodology covered here could be applied to patch management and system hardening routines. An IT personnel would investigate a relevant critical vulnerability, compile their findings, examine existing systems for weaknesses and follow up with appropriate solutions or mitigations e.g. rolling out official security patches.
